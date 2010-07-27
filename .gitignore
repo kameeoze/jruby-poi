@@ -1,0 +1,8 @@
+.DS_Store
+.project
+.idea
+nbproject
+.*~
+tmp
+*.swp
+TAGS
