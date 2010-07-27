@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
      "README.markdown",
      "Rakefile",
      "VERSION",
+     "jruby-poi.gemspec",
      "lib/ooxml-lib/dom4j-1.6.1.jar",
      "lib/ooxml-lib/geronimo-stax-api_1.0_spec-1.0.jar",
      "lib/ooxml-lib/xmlbeans-2.3.0.jar",
