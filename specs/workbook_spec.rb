@@ -1,12 +1,27 @@
 require File.join(File.dirname(__FILE__), 'spec_helper')
 require 'date'
+require 'stringio'
 
 describe POI::Workbook do
   it "should open a workbook and allow access to its worksheets" do
     name = TestDataFile.expand_path("various_samples.xlsx")
     book = POI::Workbook.open(name)
-
     book.worksheets.size.should == 4
+    book.filename.should == name
+  end
+
+  it "should be able to create a Workbook from an IO object" do
+    content = StringIO.new(open(TestDataFile.expand_path("various_samples.xlsx"), 'rb'){|f| f.read})
+    book = POI::Workbook.open(content)
+    book.worksheets.size.should == 4
+    book.filename.should =~ /spreadsheet.xlsx$/
+  end
+
+  it "should be able to create a Workbook from a Java input stream" do
+    content = java.io.FileInputStream.new(TestDataFile.expand_path("various_samples.xlsx"))
+    book = POI::Workbook.open(content)
+    book.worksheets.size.should == 4
+    book.filename.should =~ /spreadsheet.xlsx$/
   end
 end
 
