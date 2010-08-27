@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{jruby-poi}
-  s.version = "0.1.0"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Scott Deming"]
-  s.date = %q{2010-07-27}
+  s.date = %q{2010-08-27}
   s.description = %q{A rubyesque library for manipulating spreadsheets and other document types for jruby, using Apache POI.}
   s.email = %q{sdeming@makefile.com}
   s.extra_rdoc_files = [
@@ -39,11 +39,13 @@ Gem::Specification.new do |s|
      "lib/poi/workbook/row.rb",
      "lib/poi/workbook/workbook.rb",
      "lib/poi/workbook/worksheet.rb",
+     "spec_debug.sh",
      "specs/data/simple_with_picture.ods",
      "specs/data/simple_with_picture.xls",
-     "specs/data/simple_with_picture.xlsx",
+     "specs/data/various_samples.xlsx",
      "specs/io_spec.rb",
      "specs/spec_helper.rb",
+     "specs/support/matchers/cell_matcher.rb",
      "specs/workbook_spec.rb"
   ]
   s.homepage = %q{http://github.com/sdeming/jruby-poi}
