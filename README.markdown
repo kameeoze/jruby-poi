@@ -12,6 +12,7 @@ Contributors
 ============
 
 * [Scott Deming](http://github.com/sdeming)
+* [Jason Rogers](http://github.com/jacaetevha)
 
 Note on Patches/Pull Requests
 =============================
