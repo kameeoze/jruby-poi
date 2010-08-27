@@ -25,6 +25,10 @@ module POI
     def initialize(row)
       @row = row
     end
+    
+    def [](index)
+      Cell.new(@row.getCell(index))
+    end
 
     def cells
       Cells.new(self)

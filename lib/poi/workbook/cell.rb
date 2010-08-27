@@ -22,19 +22,21 @@ module POI
   end
 
   class Cell
-    CELL_TYPE_BLANK   = Java::org.apache.poi.ss.usermodel.Cell::CELL_TYPE_BLANK
-    CELL_TYPE_BOOLEAN = Java::org.apache.poi.ss.usermodel.Cell::CELL_TYPE_BOOLEAN
-    CELL_TYPE_ERROR   = Java::org.apache.poi.ss.usermodel.Cell::CELL_TYPE_ERROR
-    CELL_TYPE_FORMULA = Java::org.apache.poi.ss.usermodel.Cell::CELL_TYPE_FORMULA
-    CELL_TYPE_NUMERIC = Java::org.apache.poi.ss.usermodel.Cell::CELL_TYPE_NUMERIC
-    CELL_TYPE_STRING  = Java::org.apache.poi.ss.usermodel.Cell::CELL_TYPE_STRING
+    CELL              = Java::org.apache.poi.ss.usermodel.Cell
+    CELL_VALUE        = Java::org.apache.poi.ss.usermodel.CellValue
+    CELL_TYPE_BLANK   = CELL::CELL_TYPE_BLANK
+    CELL_TYPE_BOOLEAN = CELL::CELL_TYPE_BOOLEAN
+    CELL_TYPE_ERROR   = CELL::CELL_TYPE_ERROR
+    CELL_TYPE_FORMULA = CELL::CELL_TYPE_FORMULA
+    CELL_TYPE_NUMERIC = CELL::CELL_TYPE_NUMERIC
+    CELL_TYPE_STRING  = CELL::CELL_TYPE_STRING
     
     def initialize(cell)
       @cell = cell
     end
     
     def value
-      value_of(@cell.getCellType)
+      value_of(cell_value_for_type(@cell.getCellType))
     end
     
     def comment
@@ -45,8 +47,12 @@ module POI
       @cell.getColumnIndex 
     end    
 
-    def to_s
-      @cell.getStringCellValue
+    def to_s(evaluate_formulas=true)
+      if @cell.getCellType == CELL_TYPE_FORMULA
+        evaluate_formulas ? value.to_s : @cell.getCellFormula
+      else
+        value.to_s
+      end
     end
 
     def poi_cell
@@ -54,21 +60,32 @@ module POI
     end
     
     private
-      def value_of(cell_type)
-        require 'rubygems'; require 'ruby-debug'; debugger;
+      def value_of(cell_value)
+        case cell_value.getCellType
+        when CELL_TYPE_BLANK: nil
+        when CELL_TYPE_BOOLEAN: cell_value.getBooleanValue
+        when CELL_TYPE_ERROR: Java::org.apache.poi.hssf.record.formula.eval.ErrorEval.getText(cell_value.getErrorValue)
+        when CELL_TYPE_NUMERIC
+          if Java::org.apache.poi.ss.usermodel.DateUtil.isCellDateFormatted @cell
+            Date.parse(Java::org.apache.poi.ss.usermodel.DateUtil.getJavaDate(cell_value.getNumberValue).to_s)
+          else
+            cell_value.getNumberValue
+          end
+        when CELL_TYPE_STRING: cell_value.getStringValue
+        else
+          raise "unhandled cell type[#{@cell.getCellType}]"
+        end
+      end
+      
+      def cell_value_for_type(cell_type)
         case cell_type
-        when CELL_TYPE_BLANK: ''
-        when CELL_TYPE_BOOLEAN: @cell.getBooleanCellValue
-        when CELL_TYPE_ERROR: @cell.getErrorCellValue
+        when CELL_TYPE_BLANK: nil
+        when CELL_TYPE_BOOLEAN: CELL_VALUE.valueOf(@cell.getBooleanCellValue)
         when CELL_TYPE_FORMULA
           formula_evaluator = Java::org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator.new @cell.sheet.workbook
-          cell_value = formula_evaluator.evaluate @cell
-          # finish this
-        when CELL_TYPE_NUMERIC
-          # hmm... dates come in as numbers also
-          # handle like: Date.parse(@cell.getDateCellValue.to_s)
-          @cell.getNumericCellValue
-        when CELL_TYPE_STRING: @cell.getStringCellValue
+          formula_evaluator.evaluate @cell
+        when CELL_TYPE_STRING: CELL_VALUE.new(@cell.getStringCellValue)
+        when CELL_TYPE_ERROR, CELL_TYPE_NUMERIC: CELL_VALUE.new(@cell.getNumericCellValue)
         else
           raise "unhandled cell type[#{@cell.getCellType}]"
         end
