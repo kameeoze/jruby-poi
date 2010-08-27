@@ -7,6 +7,7 @@ module POI
       name, stream = if filename_or_stream.kind_of?(java.io.InputStream)
         [File.join(Dir.tmpdir, "spreadsheet.xlsx"), filename_or_stream]
       elsif filename_or_stream.kind_of?(IO) || StringIO === filename_or_stream || filename_or_stream.respond_to?(:read)
+        # NOTE: the String.unpack here can be very inefficient
         [File.join(Dir.tmpdir, "spreadsheet.xlsx"), java.io.ByteArrayInputStream.new(filename_or_stream.read.unpack('c*').to_java(:byte))]
       else
         raise Exception, "FileNotFound" unless File.exists?( filename_or_stream )
