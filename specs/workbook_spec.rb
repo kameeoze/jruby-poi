@@ -219,5 +219,11 @@ describe POI::Cells do
     sheet = book.worksheets["text & pic"]
     sheet.rows[9][0].to_s(false).should == 'CONCATENATE(A1," ", A2," ", A3," ", A4," ", A5," ", A6,".")'
   end
+  
+  it "should handle non-existent cell references" do
+    sheet = book.worksheets["bools & errors"]
+    sheet.rows[15][1].should be_nil
+  end
+
 end
 
