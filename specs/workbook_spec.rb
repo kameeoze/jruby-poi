@@ -133,6 +133,19 @@ describe POI::Cells do
     rows[9][3].to_s.should == '3.0'
   end
 
+
+  it "should handle array access from the workbook down to cells" do
+    book[1][9][0].to_s.should == '9.0'
+    book[1][9][1].to_s.should == '81.0'
+    book[1][9][2].to_s.should == '729.0'
+    book[1][9][3].to_s.should == '3.0'
+
+    book["numbers"][9][0].to_s.should == '9.0'
+    book["numbers"][9][1].to_s.should == '81.0'
+    book["numbers"][9][2].to_s.should == '729.0'
+    book["numbers"][9][3].to_s.should == '3.0'
+  end
+
   it "should provide error text for error cells" do
     sheet = book.worksheets["bools & errors"]
     rows = sheet.rows
