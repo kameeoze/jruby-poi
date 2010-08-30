@@ -8,6 +8,10 @@ INSTALL:
 
 * gem install jruby-poi
 
+TODO
+====
+* fix reading ODS files -- we have a broken spec for this in io_spec.rb
+
 Contributors
 ============
 
