@@ -12,6 +12,7 @@ USAGE
 =====
 It's pretty simple really, create a POI::Workbook and access its sheets, rows, cells -- read from it, write to it.
 <script src="http://gist.github.com/557607.js?file=gistfile1.rb"></script>
+
 TODO
 ====
 * fix reading ODS files -- we have a broken spec for this in io_spec.rb
