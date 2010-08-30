@@ -11,7 +11,30 @@ INSTALL
 USAGE
 =====
 It's pretty simple really, create a POI::Workbook and access its sheets, rows, cells -- read from it, write to it.
-<script src="http://gist.github.com/557607.js?file=gistfile1.rb"></script>
+
+    require 'poi'
+
+    # given an Excel spreadsheet whose first sheet (Sheet 1) has this data:
+    #    A  B  C  D  E        
+    # 1  4     A     2010-01-04
+    # 2  3     B     =DATE(YEAR($E$1), MONTH($E$1), A2)
+    # 3  2     C     =DATE(YEAR($E$1), MONTH($E$1), A3)
+    # 4  1     D     =DATE(YEAR($E$1), MONTH($E$1), A4)
+    workbook = POI::Workbook.open('spreadsheet.xlsx')
+    sheet = workbook.worksheets["Sheet 1"]
+    rows  = sheet.rows
+  
+    # get a cell's value -- returns the value as its proper type, evaluating formulas if need be
+    rows[0][0].value # => 4.0
+    rows[0][1].value # => nil
+    rows[0][2].value # => 'A'
+    rows[0][3].value # => nil
+    rows[0][4].value # => 2010-01-04 as a Date instance
+    rows[1][4].value # => 2010-01-03 as a Date instance
+    rows[2][4].value # => 2010-01-02 as a Date instance
+    rows[3][4].value # => 2010-01-01 as a Date instance
+
+There's a formatted version [here][http://gist.github.com/557607], but Github doesn't allow embedding script tags in Markdown. Go figure!
 
 TODO
 ====
