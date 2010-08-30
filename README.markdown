@@ -10,7 +10,7 @@ INSTALL
 
 USAGE
 =====
-It's pretty simple really, create a POI::Workbook and access its sheets, rows, cells -- read from it, write to it.
+It's pretty simple really, create a POI::Workbook and access its sheets, rows, and cells. You can read from the spreadsheet, save it (as the filename with which you created or as a new spreadsheet via Workbook#save_as).
 
     require 'poi'
 
@@ -34,11 +34,12 @@ It's pretty simple really, create a POI::Workbook and access its sheets, rows, c
     rows[2][4].value # => 2010-01-02 as a Date instance
     rows[3][4].value # => 2010-01-01 as a Date instance
 
-There's a formatted version [here](http://gist.github.com/557607), but Github doesn't allow embedding script tags in Markdown. Go figure!
+There's a formatted version of this code [here](http://gist.github.com/557607), but Github doesn't allow embedding script tags in Markdown. Go figure!
 
 TODO
 ====
 * fix reading ODS files -- we have a broken spec for this in io_spec.rb
+* add APIs for updating cells in a spreadsheet
 * create API for non-spreadsheet files
 
 Contributors

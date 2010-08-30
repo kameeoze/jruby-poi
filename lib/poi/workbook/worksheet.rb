@@ -38,6 +38,10 @@ module POI
     def rows
       Rows.new(self)
     end
+    
+    def [](row_index)
+      rows[row_index]
+    end
 
     def poi_worksheet
       @worksheet
