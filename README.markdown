@@ -34,7 +34,7 @@ It's pretty simple really, create a POI::Workbook and access its sheets, rows, c
     rows[2][4].value # => 2010-01-02 as a Date instance
     rows[3][4].value # => 2010-01-01 as a Date instance
 
-There's a formatted version [here][http://gist.github.com/557607], but Github doesn't allow embedding script tags in Markdown. Go figure!
+There's a formatted version [here](http://gist.github.com/557607), but Github doesn't allow embedding script tags in Markdown. Go figure!
 
 TODO
 ====
