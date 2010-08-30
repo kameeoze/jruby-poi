@@ -53,6 +53,10 @@ module POI
       Worksheets.new(self)
     end
 
+    def [](sheet_index)
+      worksheets[sheet_index]
+    end
+
     def poi_workbook
       @workbook
     end
