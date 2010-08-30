@@ -36,6 +36,7 @@ module POI
     end
     
     def value
+      return nil if @cell.nil?
       value_of(cell_value_for_type(@cell.getCellType))
     end
     
@@ -61,6 +62,8 @@ module POI
     
     private
       def value_of(cell_value)
+        return nil if cell_value.nil?
+        
         case cell_value.getCellType
         when CELL_TYPE_BLANK: nil
         when CELL_TYPE_BOOLEAN: cell_value.getBooleanValue

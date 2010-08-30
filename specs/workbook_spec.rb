@@ -220,9 +220,9 @@ describe POI::Cells do
     sheet.rows[9][0].to_s(false).should == 'CONCATENATE(A1," ", A2," ", A3," ", A4," ", A5," ", A6,".")'
   end
   
-  it "should handle non-existent cell references" do
+  it "should handle getting values out of 'non-existent' cells" do
     sheet = book.worksheets["bools & errors"]
-    sheet.rows[15][1].should be_nil
+    sheet.rows[14][2].value.should be_nil
   end
 
 end
