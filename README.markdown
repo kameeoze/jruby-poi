@@ -33,6 +33,12 @@ It's pretty simple really, create a POI::Workbook and access its sheets, rows, a
     rows[1][4].value # => 2010-01-03 as a Date instance
     rows[2][4].value # => 2010-01-02 as a Date instance
     rows[3][4].value # => 2010-01-01 as a Date instance
+    
+    # you can access a cell in array style as well... these snippets are all equivalent
+    workbook.sheets[0][2][2]          # => 'C'
+    workbook[0][2][2]                 # => 'C'
+    workbook.sheets['Sheet 1'][2][2]  # => 'C'
+    workbook['Sheet 1'][2][2]         # => 'C'
 
 There's a formatted version of this code [here](http://gist.github.com/557607), but Github doesn't allow embedding script tags in Markdown. Go figure!
 
