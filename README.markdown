@@ -1,4 +1,4 @@
-jruby-poi
+[jruby-poi](http://github.com/sdeming/jruby-poi)
 =========
 
 This little gem provides an alternative interface to the Apache POI java library, for JRuby. For now the API is targeted at wrapping spreadsheets. We may expand this in the future.
