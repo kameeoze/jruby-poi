@@ -35,6 +35,10 @@ module POI
       @cell = cell
     end
     
+    def error_value
+      @error_value
+    end
+    
     def value
       return nil if @cell.nil?
       value_of(cell_value_for_type(@cell.getCellType))
@@ -81,16 +85,19 @@ module POI
       end
       
       def cell_value_for_type(cell_type)
-        case cell_type
-        when CELL_TYPE_BLANK: nil
-        when CELL_TYPE_BOOLEAN: CELL_VALUE.valueOf(@cell.getBooleanCellValue)
-        when CELL_TYPE_FORMULA
-          formula_evaluator = Java::org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator.new @cell.sheet.workbook
-          formula_evaluator.evaluate @cell
-        when CELL_TYPE_STRING: CELL_VALUE.new(@cell.getStringCellValue)
-        when CELL_TYPE_ERROR, CELL_TYPE_NUMERIC: CELL_VALUE.new(@cell.getNumericCellValue)
-        else
-          raise "unhandled cell type[#{@cell.getCellType}]"
+        begin
+          case cell_type
+          when CELL_TYPE_BLANK: nil
+          when CELL_TYPE_BOOLEAN: CELL_VALUE.valueOf(@cell.getBooleanCellValue)
+          when CELL_TYPE_FORMULA: cell_value_for_type(@cell.getCachedFormulaResultType)
+          when CELL_TYPE_STRING: CELL_VALUE.new(@cell.getStringCellValue)
+          when CELL_TYPE_ERROR, CELL_TYPE_NUMERIC: CELL_VALUE.new(@cell.getNumericCellValue)
+          else
+            raise "unhandled cell type[#{@cell.getCellType}]"
+          end
+        rescue
+          @error_value = $!
+          nil
         end
       end
   end

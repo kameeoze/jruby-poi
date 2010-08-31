@@ -150,25 +150,41 @@ describe POI::Cells do
     sheet = book.worksheets["bools & errors"]
     rows = sheet.rows
 
-    rows[6][0].value.should == '~CIRCULAR~REF~'
-    rows[7][0].value.should == '#DIV/0!'
-    rows[8][0].value.should == '#N/A'
-    rows[9][0].value.should == '#NAME?'
-    rows[10][0].value.should == '#NULL!'
-    rows[11][0].value.should == '#NUM!'
-    rows[12][0].value.should == '#REF!'
-    rows[13][0].value.should == '#VALUE!'
-    lambda{ rows[14][0].value }.should raise_error(Java::java.lang.RuntimeException)
+    rows[6][0].value.should == 0.0 #'~CIRCULAR~REF~'
+    rows[6][0].error_value.should be_nil
+
+    rows[7][0].value.should be_nil #'#DIV/0!'
+    rows[7][0].error_value.should == 'java.lang.NumberFormatException: For input string: "#N/A"'
+
+    rows[8][0].value.should be_nil #'#N/A'
+    rows[8][0].error_value.should == 'java.lang.NumberFormatException: For input string: "#N/A"'
+
+    rows[9][0].value.should be_nil #'#NAME?'
+    rows[9][0].error_value.should == 'java.lang.NumberFormatException: For input string: "#N/A"'
+
+    rows[10][0].value.should be_nil #'#NULL!'
+    rows[10][0].error_value.should == 'java.lang.NumberFormatException: For input string: "#N/A"'
+
+    rows[11][0].value.should be_nil #'#NUM!'
+    rows[11][0].error_value.should == 'java.lang.NumberFormatException: For input string: "#N/A"'
+
+    rows[12][0].value.should be_nil #'#REF!'
+    rows[12][0].error_value.should == 'java.lang.NumberFormatException: For input string: "#N/A"'
+
+    rows[13][0].value.should be_nil #'#VALUE!'
+    rows[13][0].error_value.should == 'java.lang.NumberFormatException: For input string: "#N/A"'
+
+    lambda{ rows[14][0].value }.should_not raise_error(Java::java.lang.RuntimeException)
     
-    rows[6][0].to_s.should == '~CIRCULAR~REF~'
-    rows[7][0].to_s.should == '#DIV/0!'
-    rows[8][0].to_s.should == '#N/A'
-    rows[9][0].to_s.should == '#NAME?'
-    rows[10][0].to_s.should == '#NULL!'
-    rows[11][0].to_s.should == '#NUM!'
-    rows[12][0].to_s.should == '#REF!'
-    rows[13][0].to_s.should == '#VALUE!'
-    lambda{ rows[14][0].to_s }.should raise_error(Java::java.lang.RuntimeException)
+    rows[6][0].to_s.should == '0.0' #'~CIRCULAR~REF~'
+    rows[7][0].to_s.should == '' #'#DIV/0!'
+    rows[8][0].to_s.should == '' #'#N/A'
+    rows[9][0].to_s.should == '' #'#NAME?'
+    rows[10][0].to_s.should == '' #'#NULL!'
+    rows[11][0].to_s.should == '' #'#NUM!'
+    rows[12][0].to_s.should == '' #'#REF!'
+    rows[13][0].to_s.should == '' #'#VALUE!'
+    rows[14][0].to_s.should == ''
   end
 
   it "should provide booleans for boolean cells" do
