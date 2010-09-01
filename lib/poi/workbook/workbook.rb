@@ -50,11 +50,46 @@ module POI
     end
 
     def worksheets
-      Worksheets.new(self)
+      @worksheets ||= Worksheets.new(self)
+    end
+    
+    def named_ranges
+      @named_ranges ||= (0...@workbook.getNumberOfNames).collect do | idx |
+        NamedRange.new @workbook.getNameAt(idx), self
+      end
     end
 
+    # sheet_index can be a Fixnum, referring to the 0-based sheet or
+    # a String which is the sheet name or a cell reference.
+    # 
+    # If a cell reference is passed the value of that cell is returned.
     def [](sheet_index)
-      worksheets[sheet_index]
+      begin
+        cell = cell(sheet_index)
+        Array === cell ? cell.collect{|e| e.value} : cell.value
+      rescue
+        answer = worksheets[sheet_index]
+        answer.poi_worksheet.nil? ? nil : answer
+      end
+    end
+
+    # takes a String in the form of a 3D cell reference and returns the Cell (eg. "Sheet 1!A1")
+    def cell reference
+      if named_range = named_ranges.detect{|e| e.name == reference}
+        cells = named_range.cells.compact
+        if cells.empty?
+          return nil
+        else
+          return cells.length == 1 ? cells.first : cells
+        end
+      end
+
+      ref = org.apache.poi.ss.util.CellReference.new(reference)
+      if ref.getSheetName.nil?
+        raise 'cell references at the workbook level must include a sheet reference (eg. Sheet1!A1)'
+      else
+        worksheets[ref.getSheetName][ref.getRow][ref.getCol]
+      end
     end
 
     def poi_workbook

@@ -6,22 +6,80 @@ describe POI::Workbook do
   it "should open a workbook and allow access to its worksheets" do
     name = TestDataFile.expand_path("various_samples.xlsx")
     book = POI::Workbook.open(name)
-    book.worksheets.size.should == 4
+    book.worksheets.size.should == 5
     book.filename.should == name
   end
 
   it "should be able to create a Workbook from an IO object" do
     content = StringIO.new(open(TestDataFile.expand_path("various_samples.xlsx"), 'rb'){|f| f.read})
     book = POI::Workbook.open(content)
-    book.worksheets.size.should == 4
+    book.worksheets.size.should == 5
     book.filename.should =~ /spreadsheet.xlsx$/
   end
 
   it "should be able to create a Workbook from a Java input stream" do
     content = java.io.FileInputStream.new(TestDataFile.expand_path("various_samples.xlsx"))
     book = POI::Workbook.open(content)
-    book.worksheets.size.should == 4
+    book.worksheets.size.should == 5
     book.filename.should =~ /spreadsheet.xlsx$/
+  end
+  
+  it "should return cells by reference" do
+    name = TestDataFile.expand_path("various_samples.xlsx")
+    book = POI::Workbook.open(name)
+
+    book.cell("numbers!A1").value.should == 'NUM'
+    book.cell("numbers!A2").to_s.should == '1.0'
+    book.cell("numbers!A3").to_s.should == '2.0'
+    book.cell("numbers!A4").to_s.should == '3.0'
+    
+    book.cell("numbers!A10").to_s.should == '9.0'
+    book.cell("numbers!B10").to_s.should == '81.0'
+    book.cell("numbers!C10").to_s.should == '729.0'
+    book.cell("numbers!D10").to_s.should == '3.0'
+
+    book.cell("text & pic!A10").value.should == 'This is an Excel XLSX workbook.'
+    book.cell("bools & errors!B3").value.should == true
+    book.cell("high refs!AM619").value.should == 'This is some text'
+    book.cell("high refs!AO624").value.should == 24.0
+    book.cell("high refs!AP631").value.should == 13.0
+
+    book.cell(%Q{'text & pic'!A10}).value.should == 'This is an Excel XLSX workbook.'
+    book.cell(%Q{'bools & errors'!B3}).value.should == true
+    book.cell(%Q{'high refs'!AM619}).value.should == 'This is some text'
+    book.cell(%Q{'high refs'!AO624}).value.should == 24.0
+    book.cell(%Q{'high refs'!AP631}).value.should == 13.0
+  end
+  
+  it "should handle named cell ranges" do
+    name = TestDataFile.expand_path("various_samples.xlsx")
+    book = POI::Workbook.open(name)
+
+    book.named_ranges.length.should == 3
+    book.named_ranges.collect{|e| e.name}.should == %w{four_times_six NAMES nums}
+    book.named_ranges.collect{|e| e.sheet.name}.should == ['high refs', 'bools & errors', 'high refs']
+    book.named_ranges.collect{|e| e.formula}.should == ["'high refs'!$AO$624", "'bools & errors'!$D$2:$D$11", "'high refs'!$AP$619:$AP$631"]
+    book['four_times_six'].should == 24.0
+    book['nums'].should == (1..13).collect{|e| e * 1.0}
+    
+    # NAMES is a range of empty cells
+    book['NAMES'].should == [nil, nil, nil, nil, nil, nil, nil]
+    book.cell('NAMES').each do | cell |
+      cell.value.should be_nil
+      cell.poi_cell.should be_nil
+      cell.to_s.should be_empty
+    end
+  end
+  
+  it "should return cell values by reference" do
+    name = TestDataFile.expand_path("various_samples.xlsx")
+    book = POI::Workbook.open(name)
+
+    book['text & pic!A10'].should == 'This is an Excel XLSX workbook.'
+    book['bools & errors!B3'].should == true
+    book['high refs!AM619'].should == 'This is some text'
+    book['high refs!AO624'].should == 24.0
+    book['high refs!AP631'].should == 13.0
   end
 end
 
@@ -54,8 +112,19 @@ describe POI::Worksheets do
       sheet.should be_kind_of POI::Worksheet
     end
 
-    book.worksheets.size.should == 4
-    book.worksheets.collect.size.should == 4
+    book.worksheets.size.should == 5
+    book.worksheets.collect.size.should == 5
+  end
+  
+  it "returns cells when passing a cell reference" do
+    name = TestDataFile.expand_path("various_samples.xlsx")
+    book = POI::Workbook.open(name)
+    book['dates']['A2'].should == Date.parse('2010-02-28')
+    book['dates']['a2'].should == Date.parse('2010-02-28')
+    book['dates']['B2'].should == Date.parse('2010-03-14')
+    book['dates']['b2'].should == Date.parse('2010-03-14')
+    book['dates']['C2'].should == Date.parse('2010-03-28')
+    book['dates']['c2'].should == Date.parse('2010-03-28')
   end
 end
 
@@ -133,7 +202,6 @@ describe POI::Cells do
     rows[9][3].to_s.should == '3.0'
   end
 
-
   it "should handle array access from the workbook down to cells" do
     book[1][9][0].to_s.should == '9.0'
     book[1][9][1].to_s.should == '81.0'
@@ -153,26 +221,26 @@ describe POI::Cells do
     rows[6][0].value.should == 0.0 #'~CIRCULAR~REF~'
     rows[6][0].error_value.should be_nil
 
-    rows[7][0].value.should be_nil #'#DIV/0!'
-    rows[7][0].error_value.should == 'java.lang.NumberFormatException: For input string: "#N/A"'
+    rows[7][0].value.should be_nil
+    rows[7][0].error_value.should == '#DIV/0!'
 
-    rows[8][0].value.should be_nil #'#N/A'
-    rows[8][0].error_value.should == 'java.lang.NumberFormatException: For input string: "#N/A"'
+    rows[8][0].value.should be_nil
+    rows[8][0].error_value.should == '#N/A'
 
-    rows[9][0].value.should be_nil #'#NAME?'
-    rows[9][0].error_value.should == 'java.lang.NumberFormatException: For input string: "#N/A"'
+    rows[9][0].value.should be_nil
+    rows[9][0].error_value.should == '#NAME?'
 
-    rows[10][0].value.should be_nil #'#NULL!'
-    rows[10][0].error_value.should == 'java.lang.NumberFormatException: For input string: "#N/A"'
+    rows[10][0].value.should be_nil
+    rows[10][0].error_value.should == '#NULL!'
 
-    rows[11][0].value.should be_nil #'#NUM!'
-    rows[11][0].error_value.should == 'java.lang.NumberFormatException: For input string: "#N/A"'
+    rows[11][0].value.should be_nil
+    rows[11][0].error_value.should == '#NUM!'
 
-    rows[12][0].value.should be_nil #'#REF!'
-    rows[12][0].error_value.should == 'java.lang.NumberFormatException: For input string: "#N/A"'
+    rows[12][0].value.should be_nil
+    rows[12][0].error_value.should == '#REF!'
 
-    rows[13][0].value.should be_nil #'#VALUE!'
-    rows[13][0].error_value.should == 'java.lang.NumberFormatException: For input string: "#N/A"'
+    rows[13][0].value.should be_nil
+    rows[13][0].error_value.should == '#VALUE!'
 
     lambda{ rows[14][0].value }.should_not raise_error(Java::java.lang.RuntimeException)
     

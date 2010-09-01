@@ -27,7 +27,8 @@ module POI
     end
     
     def [](index)
-      Cell.new(@row.getCell(index))
+      return nil if poi_row.nil?
+      Cell.new(poi_row.getCell(index))
     end
 
     def cells
@@ -35,7 +36,8 @@ module POI
     end
 
     def index
-      @row.getRowNum
+      return nil if poi_row.nil?
+      poi_row.getRowNum
     end    
 
     def poi_row
