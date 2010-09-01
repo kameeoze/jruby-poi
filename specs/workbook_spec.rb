@@ -71,6 +71,12 @@ describe POI::Workbook do
     end
   end
   
+  it "should return an array of cell values by reference" do
+    name = TestDataFile.expand_path("various_samples.xlsx")
+    book = POI::Workbook.open(name)
+    book['dates!A2:A16'].should == (Date.parse('2010-02-28')..Date.parse('2010-03-14')).to_a
+  end
+  
   it "should return cell values by reference" do
     name = TestDataFile.expand_path("various_samples.xlsx")
     book = POI::Workbook.open(name)

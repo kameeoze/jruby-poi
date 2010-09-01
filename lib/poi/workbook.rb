@@ -1,3 +1,4 @@
+require File.join(JRUBY_POI_LIB_PATH, 'poi', 'workbook', 'area')
 require File.join(JRUBY_POI_LIB_PATH, 'poi', 'workbook', 'named_range')
 require File.join(JRUBY_POI_LIB_PATH, 'poi', 'workbook', 'workbook')
 require File.join(JRUBY_POI_LIB_PATH, 'poi', 'workbook', 'worksheet')

@@ -63,18 +63,19 @@ module POI
     # a String which is the sheet name or a cell reference.
     # 
     # If a cell reference is passed the value of that cell is returned.
-    def [](sheet_index)
+    def [](reference)
       begin
-        cell = cell(sheet_index)
+        cell = cell(reference)
         Array === cell ? cell.collect{|e| e.value} : cell.value
       rescue
-        answer = worksheets[sheet_index]
+        answer = worksheets[reference]
         answer.poi_worksheet.nil? ? nil : answer
       end
     end
 
     # takes a String in the form of a 3D cell reference and returns the Cell (eg. "Sheet 1!A1")
     def cell reference
+      # if the reference is to a named range of cells, get that range and return it
       if named_range = named_ranges.detect{|e| e.name == reference}
         cells = named_range.cells.compact
         if cells.empty?
@@ -83,12 +84,27 @@ module POI
           return cells.length == 1 ? cells.first : cells
         end
       end
-
+      
+      # if the reference is to an area of cells, get all the cells in that area and return them
+      cells = cells_in_area(reference)
+      unless cells.empty?
+        return cells.length == 1 ? cells.first : cells
+      end
+      
       ref = org.apache.poi.ss.util.CellReference.new(reference)
       if ref.getSheetName.nil?
         raise 'cell references at the workbook level must include a sheet reference (eg. Sheet1!A1)'
       else
         worksheets[ref.getSheetName][ref.getRow][ref.getCol]
+      end
+    end
+    
+    def cells_in_area reference
+      area = Area.new(reference)
+      if area.single_cell_reference?
+        []
+      else
+        area.in(self).compact
       end
     end
 
