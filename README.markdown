@@ -42,18 +42,18 @@ It's pretty simple really, create a POI::Workbook and access its sheets, rows, a
     workbook['Sheet 1'][2][2]         # => 'C'
 
     # you can access a cell in 3D cell format too
-		workbook['Sheet 1!A1']            # => 4.0
+    workbook['Sheet 1!A1']            # => 4.0
 
-		# you can even refer to ranges of cells
-		workbook['Sheet 1!A1:A3]          # => [4.0, 3.0, 2.0]
+    # you can even refer to ranges of cells
+    workbook['Sheet 1!A1:A3']         # => [4.0, 3.0, 2.0]
 
     # if cells E1 - E4 were a named range, you could refer to those cells by its name
-		# eg. if the cells were named 'dates'...
-		workbook['dates']                 # => dates from E1 - E4
+    # eg. if the cells were named "dates"...
+    workbook['dates']                 # => dates from E1 - E4
 
-		# to get the Cell instance, instead of its value, just use the Workbook#cell method
-		workbook.cell('dates')            # => cells that contain dates from E1 to E4
-		workbook['Sheet 1!A1:A3]          # => cells that contain 4.0, 3.0, and 2.0
+    # to get the Cell instance, instead of its value, just use the Workbook#cell method
+    workbook.cell('dates')            # => cells that contain dates from E1 to E4
+    workbook['Sheet 1!A1:A3']         # => cells that contain 4.0, 3.0, and 2.0
 
 There's a formatted version of this code [here](http://gist.github.com/557607), but Github doesn't allow embedding script tags in Markdown. Go figure!
 
