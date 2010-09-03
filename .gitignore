@@ -6,4 +6,7 @@ nbproject
 tmp
 *.swp
 TAGS
+tags
 pkg
+.yardoc
+documentation
