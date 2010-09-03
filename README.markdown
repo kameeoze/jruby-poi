@@ -1,3 +1,6 @@
+# <span color='red'>STOP!</span> 
+Development of this library has moved to the [kameeoze](http://github.com/kameeoze/) organization [here](http://github.com/kameeoze/jruby-poi)
+
 [jruby-poi](http://github.com/sdeming/jruby-poi)
 =========
 
