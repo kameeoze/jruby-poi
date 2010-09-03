@@ -8,16 +8,16 @@ module POI
     end
 
     def [](index)
-      Cell.new(@poi_row.getCell(index))
+      Cell.new(@poi_row.cell(index))
     end
 
     def size
-      @poi_row.getPhysicalNumberOfCells
+      @poi_row.physical_number_of_cells
     end
 
     def each
-      it = @poi_row.cellIterator
-      yield Cell.new(it.next) while it.hasNext
+      it = @poi_row.cell_iterator
+      yield Cell.new(it.next) while it.has_next
     end
   end
 
@@ -39,11 +39,11 @@ module POI
     # out of cell when one thinks the value returned is incorrect. It may have more value in development
     # than in production.
     def error_value
-      if poi_cell.getCellType == CELL_TYPE_ERROR
-        Java::org.apache.poi.hssf.record.formula.eval.ErrorEval.getText(poi_cell.getErrorCellValue)
-      elsif poi_cell.getCellType == CELL_TYPE_FORMULA && poi_cell.getCachedFormulaResultType == CELL_TYPE_ERROR
-        formula_evaluator = Java::org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator.new poi_cell.sheet.workbook
-        value_of(formula_evaluator.evaluate(poi_cell))
+      if poi_cell.cell_type == CELL_TYPE_ERROR
+        error_value_from(poi_cell.error_cell_value)
+      elsif poi_cell.cell_type == CELL_TYPE_FORMULA && 
+            poi_cell.cached_formula_result_type == CELL_TYPE_ERROR
+        value_of(formula_evaluator_for(poi_cell.sheet.workbook).evaluate(poi_cell))
       else
         nil
       end
@@ -51,20 +51,20 @@ module POI
     
     # returns the formula for this Cell if it has one, otherwise nil
     def formula_value
-      poi_cell.getCellType == CELL_TYPE_FORMULA ? poi_cell.getCellFormula : nil
+      poi_cell.cell_type == CELL_TYPE_FORMULA ? poi_cell.cell_formula : nil
     end
     
     def value
       return nil if poi_cell.nil?
-      value_of(cell_value_for_type(poi_cell.getCellType))
+      value_of(cell_value_for_type(poi_cell.cell_type))
     end
     
     def comment
-      poi_cell.getCellComment
+      poi_cell.cell_comment
     end
 
     def index
-      poi_cell.getColumnIndex 
+      poi_cell.column_index 
     end    
 
     # Get the String representation of this Cell's value.
@@ -74,7 +74,7 @@ module POI
     def to_s(evaluate_formulas=true)
       return '' if poi_cell.nil?
 
-      if poi_cell.getCellType == CELL_TYPE_FORMULA && evaluate_formulas == false
+      if poi_cell.cell_type == CELL_TYPE_FORMULA && evaluate_formulas == false
         formula_value
       else
         value.to_s
@@ -90,19 +90,14 @@ module POI
       def value_of(cell_value)
         return nil if cell_value.nil?
         
-        case cell_value.getCellType
+        case cell_value.cell_type
         when CELL_TYPE_BLANK: nil
-        when CELL_TYPE_BOOLEAN: cell_value.getBooleanValue
-        when CELL_TYPE_ERROR: Java::org.apache.poi.hssf.record.formula.eval.ErrorEval.getText(cell_value.getErrorValue)
-        when CELL_TYPE_NUMERIC
-          if Java::org.apache.poi.ss.usermodel.DateUtil.isCellDateFormatted poi_cell
-            Date.parse(Java::org.apache.poi.ss.usermodel.DateUtil.getJavaDate(cell_value.getNumberValue).to_s)
-          else
-            cell_value.getNumberValue
-          end
-        when CELL_TYPE_STRING: cell_value.getStringValue
+        when CELL_TYPE_BOOLEAN: cell_value.boolean_value
+        when CELL_TYPE_ERROR: error_value_from(cell_value.error_value)
+        when CELL_TYPE_NUMERIC: numeric_value_from(cell_value)
+        when CELL_TYPE_STRING: cell_value.string_value
         else
-          raise "unhandled cell type[#{cell_value.getCellType}]"
+          raise "unhandled cell type[#{cell_value.cell_type}]"
         end
       end
       
@@ -111,15 +106,34 @@ module POI
         begin
           case cell_type
           when CELL_TYPE_BLANK: nil
-          when CELL_TYPE_BOOLEAN: CELL_VALUE.valueOf(poi_cell.getBooleanCellValue)
-          when CELL_TYPE_FORMULA: cell_value_for_type(poi_cell.getCachedFormulaResultType)
-          when CELL_TYPE_STRING: CELL_VALUE.new(poi_cell.getStringCellValue)
-          when CELL_TYPE_ERROR, CELL_TYPE_NUMERIC: CELL_VALUE.new(poi_cell.getNumericCellValue)
+          when CELL_TYPE_BOOLEAN: CELL_VALUE.value_of(poi_cell.boolean_cell_value)
+          when CELL_TYPE_FORMULA: cell_value_for_type(poi_cell.cached_formula_result_type)
+          when CELL_TYPE_STRING: CELL_VALUE.new(poi_cell.string_cell_value)
+          when CELL_TYPE_ERROR, CELL_TYPE_NUMERIC: CELL_VALUE.new(poi_cell.numeric_cell_value)
           else
-            raise "unhandled cell type[#{poi_cell.getCellType}]"
+            raise "unhandled cell type[#{poi_cell.cell_type}]"
           end
         rescue
           nil
+        end
+      end
+      
+      def error_value_from(cell_value)
+        # org.apache.poi.hssf.record.formula.eval.ErrorEval.text(cell_value)
+        org.apache.poi.ss.usermodel.ErrorConstants.text(cell_value)
+      end
+      
+      def formula_evaluator_for(workbook)
+        workbook.creation_helper.create_formula_evaluator
+        # org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator.new(workbook)
+      end
+      
+      def numeric_value_from(cell_value)
+        if org.apache.poi.ss.usermodel.DateUtil.cell_date_formatted(poi_cell)
+          Date.parse(
+            org.apache.poi.ss.usermodel.DateUtil.get_java_date(cell_value.number_value).to_s)
+        else
+          cell_value.number_value
         end
       end
   end

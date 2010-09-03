@@ -10,19 +10,19 @@ module POI
     def [](index)
       worksheet = case
         when index.kind_of?(Numeric)
-          @poi_workbook.getSheetAt(index)
+          @poi_workbook.sheet_at(index)
         else 
-          @poi_workbook.getSheet(index)
+          @poi_workbook.get_sheet(index)
       end
       Worksheet.new(worksheet)
     end
 
     def size
-      @poi_workbook.getNumberOfSheets
+      @poi_workbook.number_of_sheets
     end
 
     def each
-      (0...size).each { |i| yield Worksheet.new(@poi_workbook.getSheetAt(i)) }
+      (0...size).each { |i| yield Worksheet.new(@poi_workbook.sheet_at(i)) }
     end
   end
 
@@ -32,7 +32,7 @@ module POI
     end
 
     def name
-      @worksheet.getSheetName
+      @worksheet.sheet_name
     end
 
     def rows
@@ -48,7 +48,7 @@ module POI
         rows[row_index]
       else
         ref = org.apache.poi.ss.util.CellReference.new(row_index)
-        rows[ref.getRow][ref.getCol].value
+        rows[ref.row][ref.col].value
       end
     end
 

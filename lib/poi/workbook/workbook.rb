@@ -54,8 +54,8 @@ module POI
     end
     
     def named_ranges
-      @named_ranges ||= (0...@workbook.getNumberOfNames).collect do | idx |
-        NamedRange.new @workbook.getNameAt(idx), self
+      @named_ranges ||= (0...@workbook.number_of_names).collect do | idx |
+        NamedRange.new @workbook.name_at(idx), self
       end
     end
 
@@ -92,10 +92,10 @@ module POI
       end
       
       ref = org.apache.poi.ss.util.CellReference.new(reference)
-      if ref.getSheetName.nil?
+      if ref.sheet_name.nil?
         raise 'cell references at the workbook level must include a sheet reference (eg. Sheet1!A1)'
       else
-        worksheets[ref.getSheetName][ref.getRow][ref.getCol]
+        worksheets[ref.sheet_name][ref.row][ref.col]
       end
     end
     

@@ -8,15 +8,15 @@ module POI
     end
   
     def name
-      @name.getNameName
+      @name.name_name
     end
   
     def sheet
-      @workbook[@name.getSheetName]
+      @workbook[@name.sheet_name]
     end
   
     def formula
-      @name.getRefersToFormula
+      @name.refers_to_formula
     end
   
     def cells
