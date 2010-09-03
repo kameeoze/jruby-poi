@@ -1,5 +1,6 @@
 begin
   require 'jeweler'
+  
   Jeweler::Tasks.new do |gemspec|
     gemspec.name = "jruby-poi"
     gemspec.summary = "Apache POI class library for jruby"
@@ -12,3 +13,12 @@ rescue LoadError
   puts "Jeweler not available. Install it with: gem install jeweler"
 end
 
+require 'spec/rake/spectask'
+
+desc "Run all examples with RCov"
+Spec::Rake::SpecTask.new('rcov') do |t|
+  t.spec_files = FileList['specs/**/*.rb']
+  t.spec_opts = ['-c']
+  t.rcov = true
+  t.rcov_opts = ['--include', '/lib/', '--exclude', '/gems/,/^specs/,/^.eval.$/']
+end
