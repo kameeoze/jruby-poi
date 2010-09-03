@@ -22,6 +22,7 @@ module POI
   end
 
   class Cell
+    DATE_UTIL         = Java::org.apache.poi.ss.usermodel.DateUtil
     CELL              = Java::org.apache.poi.ss.usermodel.Cell
     CELL_VALUE        = Java::org.apache.poi.ss.usermodel.CellValue
     CELL_TYPE_BLANK   = CELL::CELL_TYPE_BLANK
@@ -119,19 +120,16 @@ module POI
       end
       
       def error_value_from(cell_value)
-        # org.apache.poi.hssf.record.formula.eval.ErrorEval.text(cell_value)
         org.apache.poi.ss.usermodel.ErrorConstants.text(cell_value)
       end
       
       def formula_evaluator_for(workbook)
         workbook.creation_helper.create_formula_evaluator
-        # org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator.new(workbook)
       end
       
       def numeric_value_from(cell_value)
-        if org.apache.poi.ss.usermodel.DateUtil.cell_date_formatted(poi_cell)
-          Date.parse(
-            org.apache.poi.ss.usermodel.DateUtil.get_java_date(cell_value.number_value).to_s)
+        if DATE_UTIL.cell_date_formatted(poi_cell)
+          Date.parse(DATE_UTIL.get_java_date(cell_value.number_value).to_s)
         else
           cell_value.number_value
         end
