@@ -42,6 +42,7 @@ module POI
     # Accepts a Fixnum or a String as the row_index
     #
     # row_index as Fixnum - returns the 0-based row
+    #
     # row_index as String - assumes a cell reference within this sheet and returns the cell value for that reference
     def [](row_index)
       if Fixnum === row_index

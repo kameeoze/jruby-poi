@@ -59,10 +59,12 @@ module POI
       end
     end
 
-    # sheet_index can be a Fixnum, referring to the 0-based sheet or
+    # reference can be a Fixnum, referring to the 0-based sheet or
     # a String which is the sheet name or a cell reference.
     # 
     # If a cell reference is passed the value of that cell is returned.
+    #
+    # If the reference refers to a contiguous range of cells an array of values will be returned
     def [](reference)
       begin
         cell = cell(reference)
@@ -74,6 +76,8 @@ module POI
     end
 
     # takes a String in the form of a 3D cell reference and returns the Cell (eg. "Sheet 1!A1")
+    #
+    # If the reference refers to a contiguous range of cells an array of Cells will be returned
     def cell reference
       # if the reference is to a named range of cells, get that range and return it
       if named_range = named_ranges.detect{|e| e.name == reference}
