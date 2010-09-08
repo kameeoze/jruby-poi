@@ -173,6 +173,21 @@ describe POI::Cells do
     cells.size.should == 1
     cells.collect.size.should == 1
   end
+end
+
+describe POI::Cell do
+  before :each do
+    @name = TestDataFile.expand_path("various_samples.xlsx")
+    @book = POI::Workbook.open(@name)
+  end
+
+  def book
+    @book
+  end
+
+  def name
+    @name
+  end
 
   it "should provide dates for date cells" do
     sheet = book.worksheets["dates"]
@@ -328,5 +343,11 @@ describe POI::Cells do
     sheet.rows[14][2].value.should be_nil
   end
 
+  it "should notify the workbook that I have been updated" do
+    book['dates!A2'].to_s.should == '2010-02-28'
+    book['dates!B2'].to_s.should == '2010-03-14'
+    
+    book.cell('dates!B2').formula = 'A10 + 1'
+    book['dates!B2'].to_s.should == '2010-03-09'
+  end
 end
-

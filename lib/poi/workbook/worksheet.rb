@@ -14,7 +14,7 @@ module POI
         else 
           @poi_workbook.get_sheet(index)
       end
-      Worksheet.new(worksheet)
+      Worksheet.new(worksheet, @workbook)
     end
 
     def size
@@ -22,15 +22,16 @@ module POI
     end
 
     def each
-      (0...size).each { |i| yield Worksheet.new(@poi_workbook.sheet_at(i)) }
+      (0...size).each { |i| yield Worksheet.new(@poi_workbook.sheet_at(i), @workbook) }
     end
   end
 
   class Worksheet
-    def initialize(worksheet = nil)
+    def initialize(worksheet, workbook)
       @worksheet = worksheet
+      @workbook  = workbook
     end
-
+    
     def name
       @worksheet.sheet_name
     end
@@ -55,6 +56,10 @@ module POI
 
     def poi_worksheet
       @worksheet
+    end
+    
+    def workbook
+      @workbook
     end
   end
 end

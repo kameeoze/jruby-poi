@@ -27,6 +27,10 @@ module POI
       @filename = filename
       @workbook = org.apache.poi.ss.usermodel.WorkbookFactory.create(io_stream)
     end
+    
+    def formula_evaluator
+      @formula_evaluator ||= @workbook.creation_helper.create_formula_evaluator
+    end
 
     def save
       save_as(@filename)
@@ -114,6 +118,25 @@ module POI
 
     def poi_workbook
       @workbook
+    end
+    
+    def on_update cell
+      # formula_evaluator.notify_update_cell cell.poi_cell
+      clear_all_formula_results
+    end
+    
+    def on_formula_update cell
+      # formula_evaluator.notify_set_formula cell.poi_cell
+      clear_all_formula_results
+    end
+    
+    def on_delete cell
+      # formula_evaluator.notify_delete_cell cell.poi_cell
+      clear_all_formula_results
+    end
+    
+    def clear_all_formula_results
+      formula_evaluator.clear_all_cached_result_values
     end
   end
 end
