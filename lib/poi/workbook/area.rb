@@ -13,7 +13,7 @@ module POI
     end
     
     def single_cell_reference?
-      @ref == area.getFirstCell.formatAsString
+      @ref == area.getFirstCell.formatAsString rescue false
     end
     
     private

@@ -24,6 +24,14 @@ describe POI::Workbook do
     book.filename.should =~ /spreadsheet.xlsx$/
   end
   
+  it "should return a column of cells by reference" do
+    name = TestDataFile.expand_path("various_samples.xlsx")
+    book = POI::Workbook.open(name)
+    book["numbers!$A"].should == book['numbers'].rows.collect{|e| e[0].value}
+    book["numbers!A"].should == book['numbers'].rows.collect{|e| e[0].value}
+    book["numbers!C"].should == book['numbers'].rows.collect{|e| e[2].value}
+  end
+  
   it "should return cells by reference" do
     name = TestDataFile.expand_path("various_samples.xlsx")
     book = POI::Workbook.open(name)

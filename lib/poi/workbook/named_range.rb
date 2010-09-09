@@ -20,7 +20,7 @@ module POI
     end
   
     def cells
-      [@workbook.cell(formula)].flatten
+      @name.is_deleted ? [] : [@workbook.cell(formula)].flatten
     end
   
     def values

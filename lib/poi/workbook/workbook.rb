@@ -93,12 +93,21 @@ module POI
         end
       end
       
+      # check if the named_range is a full column reference
+      if column_reference?(named_range)
+        return all_cells_in_column named_range.formula
+      end
+      
       # if the reference is to an area of cells, get all the cells in that area and return them
       cells = cells_in_area(reference)
       unless cells.empty?
         return cells.length == 1 ? cells.first : cells
       end
       
+      if column_reference?(reference)
+        return all_cells_in_column reference
+      end
+
       ref = org.apache.poi.ss.util.CellReference.new(reference)
       if ref.sheet_name.nil?
         raise 'cell references at the workbook level must include a sheet reference (eg. Sheet1!A1)'
@@ -138,6 +147,26 @@ module POI
     def clear_all_formula_results
       formula_evaluator.clear_all_cached_result_values
     end
+    
+    def all_cells_in_column reference
+      cell_reference = org.apache.poi.ss.util.CellReference.new( reference + "1" )
+      column         = cell_reference.get_col
+      sheet          = cell_reference.get_sheet_name
+      worksheets[sheet].rows.collect{|row| row[column]}
+    end
+    
+    private
+      def column_reference? named_range_or_reference
+        return false if named_range_or_reference.nil?
+        
+        reference = named_range_or_reference
+        if NamedRange === named_range_or_reference
+          reference = named_range_or_reference.formula
+        end
+        cell_reference = reference.split('!', 2).last
+        beginning, ending = cell_reference.split(':')
+        !(beginning =~ /\d/ || (ending.nil? ? false : ending =~ /\d/))
+      end
   end
 end
 
