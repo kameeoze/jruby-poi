@@ -30,12 +30,13 @@ describe POI::Workbook do
     book["numbers!$A"].should == book['numbers'].rows.collect{|e| e[0].value}
     book["numbers!A"].should == book['numbers'].rows.collect{|e| e[0].value}
     book["numbers!C"].should == book['numbers'].rows.collect{|e| e[2].value}
+    book["numbers!$D:$D"].should == book['numbers'].rows.collect{|e| e[3].value}
+    book["numbers!$c:$D"].should == {"C" => book['numbers'].rows.collect{|e| e[2].value}, "D" => book['numbers'].rows.collect{|e| e[3].value}}
   end
   
   it "should return cells by reference" do
     name = TestDataFile.expand_path("various_samples.xlsx")
     book = POI::Workbook.open(name)
-
     book.cell("numbers!A1").value.should == 'NUM'
     book.cell("numbers!A2").to_s.should == '1.0'
     book.cell("numbers!A3").to_s.should == '2.0'
@@ -133,12 +134,12 @@ describe POI::Worksheets do
   it "returns cells when passing a cell reference" do
     name = TestDataFile.expand_path("various_samples.xlsx")
     book = POI::Workbook.open(name)
-    book['dates']['A2'].should == Date.parse('2010-02-28')
-    book['dates']['a2'].should == Date.parse('2010-02-28')
-    book['dates']['B2'].should == Date.parse('2010-03-14')
-    book['dates']['b2'].should == Date.parse('2010-03-14')
-    book['dates']['C2'].should == Date.parse('2010-03-28')
-    book['dates']['c2'].should == Date.parse('2010-03-28')
+    book['dates']['A2'].to_s.should == '2010-02-28'
+    book['dates']['a2'].to_s.should == '2010-02-28'
+    book['dates']['B2'].to_s.should == '2010-03-14'
+    book['dates']['b2'].to_s.should == '2010-03-14'
+    book['dates']['C2'].to_s.should == '2010-03-28'
+    book['dates']['c2'].to_s.should == '2010-03-28'
   end
 end
 

@@ -36,8 +36,16 @@ module POI
       @worksheet.sheet_name
     end
 
+    def first_row
+      @worksheet.first_row_num
+    end
+
+    def last_row
+      @worksheet.last_row_num
+    end
+
     def rows
-      Rows.new(self)
+      @rows ||= Rows.new(self)
     end
     
     # Accepts a Fixnum or a String as the row_index

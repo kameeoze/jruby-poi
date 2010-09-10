@@ -3,12 +3,13 @@ module POI
     include Enumerable
 
     def initialize(row)
-      @row = row
+      @row     = row
       @poi_row = row.poi_row
+      @cells   = {}
     end
 
     def [](index)
-      Cell.new(@poi_row.cell(index), @row)
+      @cells[index] ||= Cell.new(@poi_row.cell(index), @row)
     end
 
     def size

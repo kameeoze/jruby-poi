@@ -68,14 +68,27 @@ module POI
     # 
     # If a cell reference is passed the value of that cell is returned.
     #
-    # If the reference refers to a contiguous range of cells an array of values will be returned
+    # If the reference refers to a contiguous range of cells an Array of values will be returned.
+    #
+    # If the reference refers to a multiple columns a Hash of values will be returned by column name.
     def [](reference)
-      begin
-        cell = cell(reference)
-        Array === cell ? cell.collect{|e| e.value} : cell.value
-      rescue
-        answer = worksheets[reference]
-        answer.poi_worksheet.nil? ? nil : answer
+      if Fixnum === reference
+        return worksheets[reference]
+      end
+      
+      if sheet = worksheets.detect{|e| e.name == reference}
+        return sheet.poi_worksheet.nil? ? nil : sheet
+      end
+
+      cell = cell(reference)
+      if Array === cell
+        cell.collect{|e| e.value}
+      elsif Hash === cell
+        values = {}
+        cell.each_pair{|column_name, cells| values[column_name] = cells.collect{|e| e.value}}
+        values
+      else
+        cell.value
       end
     end
 
@@ -108,7 +121,12 @@ module POI
         return all_cells_in_column reference
       end
 
-      ref = org.apache.poi.ss.util.CellReference.new(reference)
+      ref = POI::CELL_REF.new(reference)
+      single_cell ref
+    end
+    
+    # ref is a POI::CELL_REF instance
+    def single_cell ref
       if ref.sheet_name.nil?
         raise 'cell references at the workbook level must include a sheet reference (eg. Sheet1!A1)'
       else
@@ -118,11 +136,7 @@ module POI
     
     def cells_in_area reference
       area = Area.new(reference)
-      if area.single_cell_reference?
-        []
-      else
-        area.in(self).compact
-      end
+      area.in(self)
     end
 
     def poi_workbook
@@ -149,10 +163,18 @@ module POI
     end
     
     def all_cells_in_column reference
-      cell_reference = org.apache.poi.ss.util.CellReference.new( reference + "1" )
-      column         = cell_reference.get_col
-      sheet          = cell_reference.get_sheet_name
-      worksheets[sheet].rows.collect{|row| row[column]}
+      sheet_parts = reference.split('!')
+      area_parts  = sheet_parts.last.split(':')
+      area_start  = "#{sheet_parts.first}!#{area_parts.first}"
+      area_end    = area_parts.last
+      
+      area = org.apache.poi.ss.util.AreaReference.getWholeColumn(area_start, area_end)
+      full_ref = "#{area.first_cell.format_as_string}:#{area.last_cell.format_as_string}"
+      Area.new(full_ref).in(self)
+      # cell_reference = org.apache.poi.ss.util.CellReference.new( reference + "1" )
+      # column         = cell_reference.get_col
+      # sheet          = cell_reference.get_sheet_name
+      # worksheets[sheet].rows.collect{|row| row[column]}
     end
     
     private

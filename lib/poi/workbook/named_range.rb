@@ -12,7 +12,7 @@ module POI
     end
   
     def sheet
-      @workbook[@name.sheet_name]
+      @workbook.worksheets[@name.sheet_name]
     end
   
     def formula

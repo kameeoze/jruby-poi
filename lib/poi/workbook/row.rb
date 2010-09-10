@@ -5,10 +5,11 @@ module POI
     def initialize(worksheet)
       @worksheet = worksheet
       @poi_worksheet = worksheet.poi_worksheet
+      @rows = {}
     end
 
     def [](index)
-      Row.new(@poi_worksheet.row(index), @worksheet)
+      @rows[index] ||= Row.new(@poi_worksheet.row(index), @worksheet)
     end
 
     def size 
@@ -29,11 +30,11 @@ module POI
     
     def [](index)
       return nil if poi_row.nil?
-      Cell.new(poi_row.cell(index), self)
+      cells[index]
     end
 
     def cells
-      Cells.new(self)
+      @cells ||= Cells.new(self)
     end
 
     def index
