@@ -38,6 +38,11 @@ module POI
       @row  = row
     end
     
+    def <=> other
+      return 1 if other.nil?
+      return self.index <=> other.index
+    end
+    
     # This is NOT an inexpensive operation. The purpose of this method is merely to get more information
     # out of cell when one thinks the value returned is incorrect. It may have more value in development
     # than in production.

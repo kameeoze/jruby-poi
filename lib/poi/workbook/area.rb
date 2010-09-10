@@ -12,16 +12,32 @@ module POI
       
       begin
         by_column = {}
+        # refs = area.all_referenced_cells
+        # slices = refs.enum_slice(refs.length/15)
+        # slices.collect do |cell_refs|
+        #   Thread.start do
+        #     cell_refs.each do |cell_ref|
+        #       first = workbook.worksheets[cell_ref.sheet_name].first_row
+        #       last  = workbook.worksheets[cell_ref.sheet_name].last_row
+        #       next unless cell_ref.row >= first && cell_ref.row <= last
+        # 
+        #       # ref = POI::CELL_REF.new(c.format_as_string)
+        #       cell = workbook.single_cell cell_ref
+        #       (by_column[cell_ref.cell_ref_parts.collect.last] ||= []) << cell
+        #     end
+        #   end
+        # end.each {|t| t.join}
+
         area.all_referenced_cells.each do |cell_ref|
           first = workbook.worksheets[cell_ref.sheet_name].first_row
           last  = workbook.worksheets[cell_ref.sheet_name].last_row
           next unless cell_ref.row >= first && cell_ref.row <= last
-
+        
           # ref = POI::CELL_REF.new(c.format_as_string)
           cell = workbook.single_cell cell_ref
           (by_column[cell_ref.cell_ref_parts.collect.last] ||= []) << cell
         end
-        
+                
         by_column.each do |key, cells|
           by_column[key] = cells.compact
         end
@@ -32,8 +48,6 @@ module POI
           by_column
         end
       rescue
-        puts $!
-        puts $@.join("\n")
         []
       end
     end
