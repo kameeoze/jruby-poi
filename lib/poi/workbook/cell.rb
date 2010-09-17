@@ -3,12 +3,13 @@ module POI
     include Enumerable
 
     def initialize(row)
-      @row = row
+      @row     = row
       @poi_row = row.poi_row
+      @cells   = {}
     end
 
     def [](index)
-      Cell.new(@poi_row.cell(index))
+      @cells[index] ||= Cell.new(@poi_row.cell(index), @row)
     end
 
     def size
@@ -17,7 +18,7 @@ module POI
 
     def each
       it = @poi_row.cell_iterator
-      yield Cell.new(it.next) while it.has_next
+      yield Cell.new(it.next, @row) while it.has_next
     end
   end
 
@@ -32,8 +33,14 @@ module POI
     CELL_TYPE_NUMERIC = CELL::CELL_TYPE_NUMERIC
     CELL_TYPE_STRING  = CELL::CELL_TYPE_STRING
     
-    def initialize(cell)
+    def initialize(cell, row)
       @cell = cell
+      @row  = row
+    end
+    
+    def <=> other
+      return 1 if other.nil?
+      return self.index <=> other.index
     end
     
     # This is NOT an inexpensive operation. The purpose of this method is merely to get more information
@@ -44,7 +51,9 @@ module POI
         error_value_from(poi_cell.error_cell_value)
       elsif poi_cell.cell_type == CELL_TYPE_FORMULA && 
             poi_cell.cached_formula_result_type == CELL_TYPE_ERROR
-        value_of(formula_evaluator_for(poi_cell.sheet.workbook).evaluate(poi_cell))
+            
+        # breaks Law of Demeter by reaching into the Row's Worksheet, but it makes sense to do in this case
+        value_of(@row.worksheet.workbook.formula_evaluator.evaluate(poi_cell))
       else
         nil
       end
@@ -59,7 +68,23 @@ module POI
       return nil if poi_cell.nil?
       value_of(cell_value_for_type(poi_cell.cell_type))
     end
-    
+
+    def formula= new_value
+      poi_cell.cell_formula = new_value
+      @row.worksheet.workbook.on_formula_update self
+      self
+    end
+
+    def value= new_value
+      poi_cell.cell_value = new_value
+      if new_value.nil?
+        @row.worksheet.workbook.on_delete self
+      else
+        @row.worksheet.workbook.on_update self
+      end
+      self
+    end
+
     def comment
       poi_cell.cell_comment
     end

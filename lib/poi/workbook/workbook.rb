@@ -27,6 +27,10 @@ module POI
       @filename = filename
       @workbook = org.apache.poi.ss.usermodel.WorkbookFactory.create(io_stream)
     end
+    
+    def formula_evaluator
+      @formula_evaluator ||= @workbook.creation_helper.create_formula_evaluator
+    end
 
     def save
       save_as(@filename)
@@ -64,14 +68,27 @@ module POI
     # 
     # If a cell reference is passed the value of that cell is returned.
     #
-    # If the reference refers to a contiguous range of cells an array of values will be returned
+    # If the reference refers to a contiguous range of cells an Array of values will be returned.
+    #
+    # If the reference refers to a multiple columns a Hash of values will be returned by column name.
     def [](reference)
-      begin
-        cell = cell(reference)
-        Array === cell ? cell.collect{|e| e.value} : cell.value
-      rescue
-        answer = worksheets[reference]
-        answer.poi_worksheet.nil? ? nil : answer
+      if Fixnum === reference
+        return worksheets[reference]
+      end
+      
+      if sheet = worksheets.detect{|e| e.name == reference}
+        return sheet.poi_worksheet.nil? ? nil : sheet
+      end
+
+      cell = cell(reference)
+      if Array === cell
+        cell.collect{|e| e.value}
+      elsif Hash === cell
+        values = {}
+        cell.each_pair{|column_name, cells| values[column_name] = cells.collect{|e| e.value}}
+        values
+      else
+        cell.value
       end
     end
 
@@ -89,13 +106,27 @@ module POI
         end
       end
       
+      # check if the named_range is a full column reference
+      if column_reference?(named_range)
+        return all_cells_in_column named_range.formula
+      end
+      
       # if the reference is to an area of cells, get all the cells in that area and return them
       cells = cells_in_area(reference)
       unless cells.empty?
         return cells.length == 1 ? cells.first : cells
       end
       
-      ref = org.apache.poi.ss.util.CellReference.new(reference)
+      if column_reference?(reference)
+        return all_cells_in_column reference
+      end
+
+      ref = POI::CELL_REF.new(reference)
+      single_cell ref
+    end
+    
+    # ref is a POI::CELL_REF instance
+    def single_cell ref
       if ref.sheet_name.nil?
         raise 'cell references at the workbook level must include a sheet reference (eg. Sheet1!A1)'
       else
@@ -105,16 +136,59 @@ module POI
     
     def cells_in_area reference
       area = Area.new(reference)
-      if area.single_cell_reference?
-        []
-      else
-        area.in(self).compact
-      end
+      area.in(self)
     end
 
     def poi_workbook
       @workbook
     end
+    
+    def on_update cell
+      # formula_evaluator.notify_update_cell cell.poi_cell
+      clear_all_formula_results
+    end
+    
+    def on_formula_update cell
+      # formula_evaluator.notify_set_formula cell.poi_cell
+      clear_all_formula_results
+    end
+    
+    def on_delete cell
+      # formula_evaluator.notify_delete_cell cell.poi_cell
+      clear_all_formula_results
+    end
+    
+    def clear_all_formula_results
+      formula_evaluator.clear_all_cached_result_values
+    end
+    
+    def all_cells_in_column reference
+      sheet_parts = reference.split('!')
+      area_parts  = sheet_parts.last.split(':')
+      area_start  = "#{sheet_parts.first}!#{area_parts.first}"
+      area_end    = area_parts.last
+      
+      area = org.apache.poi.ss.util.AreaReference.getWholeColumn(area_start, area_end)
+      full_ref = "#{area.first_cell.format_as_string}:#{area.last_cell.format_as_string}"
+      Area.new(full_ref).in(self)
+      # cell_reference = org.apache.poi.ss.util.CellReference.new( reference + "1" )
+      # column         = cell_reference.get_col
+      # sheet          = cell_reference.get_sheet_name
+      # worksheets[sheet].rows.collect{|row| row[column]}
+    end
+    
+    private
+      def column_reference? named_range_or_reference
+        return false if named_range_or_reference.nil?
+        
+        reference = named_range_or_reference
+        if NamedRange === named_range_or_reference
+          reference = named_range_or_reference.formula
+        end
+        cell_reference = reference.split('!', 2).last
+        beginning, ending = cell_reference.split(':')
+        !(beginning =~ /\d/ || (ending.nil? ? false : ending =~ /\d/))
+      end
   end
 end
 

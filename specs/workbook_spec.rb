@@ -24,10 +24,19 @@ describe POI::Workbook do
     book.filename.should =~ /spreadsheet.xlsx$/
   end
   
+  it "should return a column of cells by reference" do
+    name = TestDataFile.expand_path("various_samples.xlsx")
+    book = POI::Workbook.open(name)
+    book["numbers!$A"].should == book['numbers'].rows.collect{|e| e[0].value}
+    book["numbers!A"].should == book['numbers'].rows.collect{|e| e[0].value}
+    book["numbers!C"].should == book['numbers'].rows.collect{|e| e[2].value}
+    book["numbers!$D:$D"].should == book['numbers'].rows.collect{|e| e[3].value}
+    book["numbers!$c:$D"].should == {"C" => book['numbers'].rows.collect{|e| e[2].value}, "D" => book['numbers'].rows.collect{|e| e[3].value}}
+  end
+  
   it "should return cells by reference" do
     name = TestDataFile.expand_path("various_samples.xlsx")
     book = POI::Workbook.open(name)
-
     book.cell("numbers!A1").value.should == 'NUM'
     book.cell("numbers!A2").to_s.should == '1.0'
     book.cell("numbers!A3").to_s.should == '2.0'
@@ -125,12 +134,12 @@ describe POI::Worksheets do
   it "returns cells when passing a cell reference" do
     name = TestDataFile.expand_path("various_samples.xlsx")
     book = POI::Workbook.open(name)
-    book['dates']['A2'].should == Date.parse('2010-02-28')
-    book['dates']['a2'].should == Date.parse('2010-02-28')
-    book['dates']['B2'].should == Date.parse('2010-03-14')
-    book['dates']['b2'].should == Date.parse('2010-03-14')
-    book['dates']['C2'].should == Date.parse('2010-03-28')
-    book['dates']['c2'].should == Date.parse('2010-03-28')
+    book['dates']['A2'].to_s.should == '2010-02-28'
+    book['dates']['a2'].to_s.should == '2010-02-28'
+    book['dates']['B2'].to_s.should == '2010-03-14'
+    book['dates']['b2'].to_s.should == '2010-03-14'
+    book['dates']['C2'].to_s.should == '2010-03-28'
+    book['dates']['c2'].to_s.should == '2010-03-28'
   end
 end
 
@@ -172,6 +181,21 @@ describe POI::Cells do
     cells.should be_kind_of Enumerable
     cells.size.should == 1
     cells.collect.size.should == 1
+  end
+end
+
+describe POI::Cell do
+  before :each do
+    @name = TestDataFile.expand_path("various_samples.xlsx")
+    @book = POI::Workbook.open(@name)
+  end
+
+  def book
+    @book
+  end
+
+  def name
+    @name
   end
 
   it "should provide dates for date cells" do
@@ -328,5 +352,11 @@ describe POI::Cells do
     sheet.rows[14][2].value.should be_nil
   end
 
+  it "should notify the workbook that I have been updated" do
+    book['dates!A2'].to_s.should == '2010-02-28'
+    book['dates!B2'].to_s.should == '2010-03-14'
+    
+    book.cell('dates!B2').formula = 'A10 + 1'
+    book['dates!B2'].to_s.should == '2010-03-09'
+  end
 end
-

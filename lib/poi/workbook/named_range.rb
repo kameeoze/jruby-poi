@@ -12,7 +12,7 @@ module POI
     end
   
     def sheet
-      @workbook[@name.sheet_name]
+      @workbook.worksheets[@name.sheet_name]
     end
   
     def formula
@@ -20,7 +20,7 @@ module POI
     end
   
     def cells
-      [@workbook.cell(formula)].flatten
+      @name.is_deleted ? [] : [@workbook.cell(formula)].flatten
     end
   
     def values

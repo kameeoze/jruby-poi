@@ -14,7 +14,7 @@ module POI
         else 
           @poi_workbook.get_sheet(index)
       end
-      Worksheet.new(worksheet)
+      Worksheet.new(worksheet, @workbook)
     end
 
     def size
@@ -22,21 +22,30 @@ module POI
     end
 
     def each
-      (0...size).each { |i| yield Worksheet.new(@poi_workbook.sheet_at(i)) }
+      (0...size).each { |i| yield Worksheet.new(@poi_workbook.sheet_at(i), @workbook) }
     end
   end
 
   class Worksheet
-    def initialize(worksheet = nil)
+    def initialize(worksheet, workbook)
       @worksheet = worksheet
+      @workbook  = workbook
     end
-
+    
     def name
       @worksheet.sheet_name
     end
 
+    def first_row
+      @worksheet.first_row_num
+    end
+
+    def last_row
+      @worksheet.last_row_num
+    end
+
     def rows
-      Rows.new(self)
+      @rows ||= Rows.new(self)
     end
     
     # Accepts a Fixnum or a String as the row_index
@@ -55,6 +64,10 @@ module POI
 
     def poi_worksheet
       @worksheet
+    end
+    
+    def workbook
+      @workbook
     end
   end
 end
