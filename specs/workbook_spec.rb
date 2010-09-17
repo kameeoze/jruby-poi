@@ -353,10 +353,17 @@ describe POI::Cell do
   end
 
   it "should notify the workbook that I have been updated" do
-    book['dates!A2'].to_s.should == '2010-02-28'
+    book['dates!A10'].to_s.should == '2010-03-08'
+    book['dates!A16'].to_s.should == '2010-03-14'
     book['dates!B2'].to_s.should == '2010-03-14'
+
+    cell = book.cell('dates!B2')
+    cell.formula.should == 'A16'
     
-    book.cell('dates!B2').formula = 'A10 + 1'
+    cell.formula = 'A10 + 1'
+    book.cell('dates!B2').poi_cell.should === cell.poi_cell
+    book.cell('dates!B2').formula.should == 'A10 + 1'
+
     book['dates!B2'].to_s.should == '2010-03-09'
   end
 end

@@ -75,6 +75,10 @@ module POI
       self
     end
 
+    def formula
+      poi_cell.cell_formula
+    end
+
     def value= new_value
       poi_cell.cell_value = new_value
       if new_value.nil?

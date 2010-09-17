@@ -144,18 +144,19 @@ module POI
     end
     
     def on_update cell
-      # formula_evaluator.notify_update_cell cell.poi_cell
-      clear_all_formula_results
+      #clear_all_formula_results
+      formula_evaluator.notify_update_cell cell.poi_cell
     end
     
     def on_formula_update cell
-      # formula_evaluator.notify_set_formula cell.poi_cell
-      clear_all_formula_results
+      #clear_all_formula_results
+      formula_evaluator.notify_set_formula cell.poi_cell
+      formula_evaluator.evaluate_formula_cell(cell.poi_cell)
     end
     
     def on_delete cell
-      # formula_evaluator.notify_delete_cell cell.poi_cell
-      clear_all_formula_results
+      #clear_all_formula_results
+      formula_evaluator.notify_delete_cell cell.poi_cell
     end
     
     def clear_all_formula_results
