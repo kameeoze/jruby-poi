@@ -9,7 +9,7 @@ module POI
     end
 
     def [](index)
-      @cells[index] ||= Cell.new(@poi_row.cell(index), @row)
+      @cells[index] ||= Cell.new(@poi_row.cell(index) || @poi_row.create_cell(index), @row)
     end
 
     def size

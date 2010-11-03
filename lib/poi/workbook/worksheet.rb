@@ -50,15 +50,18 @@ module POI
     
     # Accepts a Fixnum or a String as the row_index
     #
-    # row_index as Fixnum - returns the 0-based row
+    # row_index as Fixnum: returns the 0-based row
     #
-    # row_index as String - assumes a cell reference within this sheet and returns the cell value for that reference
+    # row_index as String: assumes a cell reference within this sheet
+    #    if the value of the reference is non-nil the value is returned,
+    #    otherwise the referenced cell is returned
     def [](row_index)
       if Fixnum === row_index
         rows[row_index]
       else
         ref = org.apache.poi.ss.util.CellReference.new(row_index)
-        rows[ref.row][ref.col].value
+        cell = rows[ref.row][ref.col]
+        cell && cell.value ? cell.value : cell
       end
     end
 

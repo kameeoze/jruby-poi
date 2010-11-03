@@ -145,7 +145,7 @@ module POI
     
     def on_update cell
       #clear_all_formula_results
-      formula_evaluator.notify_update_cell cell.poi_cell
+      #formula_evaluator.notify_update_cell cell.poi_cell
     end
     
     def on_formula_update cell
