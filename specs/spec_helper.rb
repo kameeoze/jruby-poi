@@ -1,3 +1,4 @@
+require 'rspec'
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib', 'poi'))
 Dir[File.dirname(__FILE__) + "/support/**/*.rb"].each {|f| require f}
 require File.join(File.dirname(__FILE__), "support", "java", "support.jar")
@@ -8,5 +9,5 @@ class TestDataFile
   end
 end
 
-Spec::Runner.configure do |config|
+RSpec.configure do |config|
 end

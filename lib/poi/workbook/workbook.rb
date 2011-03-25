@@ -1,8 +1,18 @@
 require 'tmpdir'
 require 'stringio'
+require 'java'
 
 module POI
   class Workbook
+    FONT = org.apache.poi.ss.usermodel.Font
+    FONT_CONSTANTS = Hash[*FONT.constants.map{|e| [e.downcase.to_sym, FONT.const_get(e)]}.flatten]
+
+    CELL_STYLE = org.apache.poi.ss.usermodel.CellStyle
+    CELL_STYLE_CONSTANTS = Hash[*CELL_STYLE.constants.map{|e| [e.downcase.to_sym, CELL_STYLE.const_get(e)]}.flatten]
+    
+    INDEXED_COLORS = org.apache.poi.ss.usermodel.IndexedColors
+    INDEXED_COLORS_CONSTANTS = Hash[*INDEXED_COLORS.constants.map{|e| [e.downcase.to_sym, INDEXED_COLORS.const_get(e)]}.flatten]
+    
     def self.open(filename_or_stream)
       name, stream = if filename_or_stream.kind_of?(java.io.InputStream)
         [File.join(Dir.tmpdir, "spreadsheet.xlsx"), filename_or_stream]
@@ -21,11 +31,15 @@ module POI
       instance
     end
     
+    def self.create(filename)
+      self.new(filename, nil)
+    end
+    
     attr_reader :filename
 
     def initialize(filename, io_stream)
       @filename = filename
-      @workbook = org.apache.poi.ss.usermodel.WorkbookFactory.create(io_stream)
+      @workbook = io_stream ? org.apache.poi.ss.usermodel.WorkbookFactory.create(io_stream) : org.apache.poi.xssf.usermodel.XSSFWorkbook.new
     end
     
     def formula_evaluator
@@ -51,6 +65,54 @@ module POI
 
     def close
       #noop
+    end
+    
+    def create_sheet name='New Sheet'
+      @workbook.createSheet name
+    end
+    
+    def create_style options={}
+      font = @workbook.createFont
+      set_value( font, :font_height_in_points, options ) do | value |
+        value.to_java(:short)
+      end
+      set_value font, :bold_weight, options, FONT_CONSTANTS
+      set_value font, :color, options, INDEXED_COLORS_CONSTANTS
+
+      style = @workbook.createCellStyle
+      [:alignment, :vertical_alignment, :fill_pattern, :border_right, :border_left, :border_top, :border_bottom].each do | sym |
+        set_value style, sym, options, CELL_STYLE_CONSTANTS
+      end
+      [:right_border_color, :left_border_color, :top_border_color, :bottom_border_color, :fill_foreground_color, :fill_background_color].each do | sym |
+        set_value( style, sym, options, INDEXED_COLORS_CONSTANTS ) do | value |
+          value.index
+        end
+      end
+      [:hidden, :locked, :wrap_text].each do | sym |
+        set_value style, sym, options
+      end
+      [:rotation, :indentation].each do | sym |
+        set_value( style, sym, options ) do | value |
+          value.to_java(:short)
+        end
+      end
+      set_value( style, :data_format, options ) do |value|
+        @workbook.create_data_format.getFormat(value)
+      end
+      style.font = font
+      style
+    end
+    
+    def set_value on, value_sym, from, using=nil
+      return on unless from.has_key?(value_sym)
+      value = if using
+        using[from[value_sym]]
+      else
+        from[value_sym]
+      end
+      value = yield value if block_given?
+      on.instance_eval("#{value_sym}=", value)
+      on
     end
 
     def worksheets

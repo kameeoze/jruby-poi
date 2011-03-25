@@ -1,4 +1,4 @@
-Spec::Matchers.define :equal_at_cell do |expected, row, col|
+RSpec::Matchers.define :equal_at_cell do |expected, row, col|
   match do |actual|
     actual == expected
   end

@@ -11,3 +11,4 @@ pkg
 .yardoc
 documentation
 coverage
+.bundle
