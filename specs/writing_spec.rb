@@ -10,16 +10,26 @@ describe "writing Workbooks" do
   end
   
   it "should create a new workbook and write something to it" do
+    name = 'specs/data/timesheet.xlsx'
+    create_timesheet_spreadsheet(name)
+    book = POI::Workbook.open(name)
+    book.worksheets.size.should == 1
+    book.worksheets[0].name.should == 'Timesheet'
+    book.filename.should == name
+    book['Timesheet!A3'].should == 'Yegor Kozlov'
+    book.cell('Timesheet!J13').formula_value.should == 'SUM(J3:J12)'
+    FileUtils.rm_f name
+  end
+  
+  def create_timesheet_spreadsheet name='specs/data/timesheet.xlsx'
     titles = ["Person",	"ID", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun", "Total\nHrs", "Overtime\nHrs", "Regular\nHrs"]
     sample_data = [
       ["Yegor Kozlov", "YK", 5.0, 8.0, 10.0, 5.0, 5.0, 7.0, 6.0],
       ["Gisella Bronzetti", "GB", 4.0, 3.0, 1.0, 3.5, nil, nil, 4.0] 
     ]
     
-    name = 'new-workbook.xlsx'
     book = POI::Workbook.create(name)
-    require 'ruby-debug'; debugger
-    title_style = book.create_style :font_height_in_points => 18, :bold_weight => :boldweight_bold,
+    title_style = book.create_style :font_height_in_points => 18, :boldweight => :boldweight_bold,
                                     :alignment => :align_center, :vertical_alignment => :vertical_center
     header_style = book.create_style :font_height_in_points => 11, :color => :white, :fill_foreground_color => :grey_50_percent,
                                      :fill_pattern => :solid_foreground, :alignment => :align_center, :vertical_alignment => :vertical_center
@@ -37,9 +47,9 @@ describe "writing Workbooks" do
     # sheet.fit_to_page = true
     # sheet.horizontally_center = true
     
-    title_row = sheet[0]
+    title_row = sheet.rows[0]
     title_row.height_in_points = 45
-    title_cell = title_row[0]
+    title_cell = title_row.cells[0]
     title_cell.value = 'Weekly Timesheet'
     title_cell.style = title_style
     sheet.add_merged_region org.apache.poi.ss.util.CellRangeAddress.valueOf("$A$1:$L$1")
@@ -75,11 +85,11 @@ describe "writing Workbooks" do
     row_num += 1
     sum_row.height_in_points = 35
     cell = sum_row[0]
-    cell.cell_style = form1_style
+    cell.style = form1_style
     cell = sum_row[1]
     cell.style = form1_style
     cell.value = 'Total Hrs:'
-    (2..12).each do | cell_index |
+    (2...12).each do | cell_index |
       cell = sum_row[cell_index]
       column = (?A + cell_index).chr
       cell.formula = "SUM(#{column}3:#{column}12)"
@@ -115,9 +125,9 @@ describe "writing Workbooks" do
         data = sample_data[row_index][cell_index]
         next unless data
         if data.kind_of? String
-          row[cell_index].value = data.to_java(:string)
+          row[cell_index].value = data #.to_java(:string)
         else
-          row[cell_index].value = data.to_java(:double)
+          row[cell_index].value = data #.to_java(:double)
         end
       end
     end

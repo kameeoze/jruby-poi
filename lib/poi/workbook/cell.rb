@@ -22,7 +22,7 @@ module POI
     end
   end
 
-  class Cell
+  class Cell < Facade(:poi_cell, org.apache.poi.ss.usermodel.Cell)
     DATE_UTIL         = Java::org.apache.poi.ss.usermodel.DateUtil
     CELL              = Java::org.apache.poi.ss.usermodel.Cell
     CELL_VALUE        = Java::org.apache.poi.ss.usermodel.CellValue
@@ -80,7 +80,7 @@ module POI
     end
 
     def value= new_value
-      poi_cell.cell_value = new_value
+      set_cell_value new_value
       if new_value.nil?
         @row.worksheet.workbook.on_delete self
       else
@@ -114,6 +114,10 @@ module POI
     # returns the underlying org.apache.poi.ss.usermodel.Cell
     def poi_cell
       @cell
+    end
+    
+    def style= a_style
+      set_cell_style a_style
     end
     
     private

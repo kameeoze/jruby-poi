@@ -1,6 +1,7 @@
 GEM
   remote: http://rubygems.org/
   specs:
+    columnize (0.3.2)
     diff-lcs (1.1.2)
     rspec (2.5.0)
       rspec-core (~> 2.5.0)
@@ -10,6 +11,10 @@ GEM
     rspec-expectations (2.5.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.5.0)
+    ruby-debug (0.10.4)
+      columnize (>= 0.1)
+      ruby-debug-base (~> 0.10.4.0)
+    ruby-debug-base (0.10.4-java)
 
 PLATFORMS
   java
@@ -17,3 +22,4 @@ PLATFORMS
 
 DEPENDENCIES
   rspec
+  ruby-debug

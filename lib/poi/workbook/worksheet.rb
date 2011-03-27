@@ -7,12 +7,12 @@ module POI
       @poi_workbook = workbook.poi_workbook
     end
 
-    def [](index)
+    def [](index_or_name)
       worksheet = case
-        when index.kind_of?(Numeric)
-          @poi_workbook.sheet_at(index)
+        when index_or_name.kind_of?(Numeric)
+          @poi_workbook.sheet_at(index_or_name) || @poi_workbook.create_sheet
         else 
-          @poi_workbook.get_sheet(index)
+          @poi_workbook.get_sheet(index_or_name) || @poi_workbook.create_sheet(index_or_name)
       end
       Worksheet.new(worksheet, @workbook)
     end
@@ -26,7 +26,8 @@ module POI
     end
   end
 
-  class Worksheet
+  class Worksheet < Facade(:poi_worksheet, org.apache.poi.ss.usermodel.Sheet)
+
     def initialize(worksheet, workbook)
       @worksheet = worksheet
       @workbook  = workbook

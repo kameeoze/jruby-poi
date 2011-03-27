@@ -22,7 +22,7 @@ module POI
     end
   end
 
-  class Row
+  class Row < Facade(:poi_row, org.apache.poi.ss.usermodel.Row)
     def initialize(row, worksheet)
       @row       = row
       @worksheet = worksheet
@@ -41,6 +41,10 @@ module POI
       return nil if poi_row.nil?
       poi_row.row_num
     end    
+
+    def height_in_points= num
+      set_height_in_points num.to_f
+    end
 
     def poi_row
       @row
