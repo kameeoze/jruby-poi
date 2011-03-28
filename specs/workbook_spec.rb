@@ -72,10 +72,10 @@ describe POI::Workbook do
     book['nums'].should == (1..13).collect{|e| e * 1.0}
     
     # NAMES is a range of empty cells
-    book['NAMES'].should == [nil, nil, nil, nil, nil, nil, nil]
+    book['NAMES'].should == [nil, nil, nil, nil, nil, nil, nil, nil, nil, nil]
     book.cell('NAMES').each do | cell |
       cell.value.should be_nil
-      cell.poi_cell.should be_nil
+      cell.poi_cell.should_not be_nil
       cell.to_s.should be_empty
     end
   end
