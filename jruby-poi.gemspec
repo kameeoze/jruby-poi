@@ -63,7 +63,7 @@ Gem::Specification.new do |s|
   ]
   s.homepage = %q{http://github.com/sdeming/jruby-poi}
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.5.1}
+  s.rubygems_version = %q{1.6.0}
   s.summary = %q{Apache POI class library for jruby}
 
   if s.respond_to? :specification_version then
