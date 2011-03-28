@@ -120,6 +120,10 @@ module POI
       set_cell_style a_style
     end
     
+    def style! options
+      self.style = @row.worksheet.workbook.create_style(options)
+    end
+    
     private
       def value_of(cell_value)
         return nil if cell_value.nil?
