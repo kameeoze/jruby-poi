@@ -14,15 +14,23 @@ rescue LoadError
 end
 
 begin
-  require 'spec/rake/spectask'
+  require 'rspec/core/rake_task'
+  task :default => :spec
+
+  desc "Run all examples"
+  RSpec::Core::RakeTask.new do |t|
+    t.pattern = 'specs/**/*.rb'
+    t.rspec_opts = ['-c']
+  end
 
   desc "Run all examples with RCov"
-  Spec::Rake::SpecTask.new('rcov') do |t|
-    t.spec_files = FileList['specs/**/*.rb']
-    t.spec_opts = ['-c']
+  RSpec::Core::RakeTask.new(:coverage) do |t|
+    t.pattern = 'specs/**/*.rb'
+    t.rspec_opts = ['-c']
     t.rcov = true
     t.rcov_opts = ['--include', '/lib/', '--exclude', '/gems/,/^specs/,/^.eval.$/']
   end
 rescue
+  puts $!.message
   puts "RCov not available. Install it with: gem install rcov (--no-rdoc --no-ri)"
 end
