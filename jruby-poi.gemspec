@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Scott Deming", "Jason Rogers"]
-  s.date = %q{2011-03-27}
+  s.date = %q{2011-03-31}
   s.description = %q{A rubyesque library for manipulating spreadsheets and other document types for jruby, using Apache POI.}
   s.email = ["sdeming@makefile.com", "jacaetevha@gmail.com"]
   s.executables = ["autospec", "htmldiff", "ldiff", "rdebug", "rspec"]
@@ -52,7 +52,9 @@ Gem::Specification.new do |s|
     "specs/data/simple_with_picture.ods",
     "specs/data/simple_with_picture.xls",
     "specs/data/spreadsheet.ods",
+    "specs/data/timesheet.xlsx",
     "specs/data/various_samples.xlsx",
+    "specs/facade_spec.rb",
     "specs/io_spec.rb",
     "specs/spec_helper.rb",
     "specs/support/java/jrubypoi/MockOutputStream.java",
@@ -63,7 +65,7 @@ Gem::Specification.new do |s|
   ]
   s.homepage = %q{http://github.com/sdeming/jruby-poi}
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.6.0}
+  s.rubygems_version = %q{1.5.1}
   s.summary = %q{Apache POI class library for jruby}
 
   if s.respond_to? :specification_version then
