@@ -10,7 +10,7 @@ describe "writing Workbooks" do
   end
   
   it "should create a new workbook and write something to it" do
-    name = 'specs/data/timesheet.xlsx'
+    name = "specs/data/timesheet-#{Time.now.strftime('%Y%m%d%H%M%S%s')}.xlsx"
     create_timesheet_spreadsheet(name)
     book = POI::Workbook.open(name)
     book.worksheets.size.should == 1
@@ -18,7 +18,7 @@ describe "writing Workbooks" do
     book.filename.should == name
     book['Timesheet!A3'].should == 'Yegor Kozlov'
     book.cell('Timesheet!J13').formula_value.should == 'SUM(J3:J12)'
-    # FileUtils.rm_f name
+    FileUtils.rm_f name
   end
   
   def create_timesheet_spreadsheet name='specs/data/timesheet.xlsx'
