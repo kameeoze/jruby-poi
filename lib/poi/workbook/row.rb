@@ -42,9 +42,9 @@ module POI
       poi_row.row_num
     end    
 
-    def height_in_points= num
-      set_height_in_points num.to_f
-    end
+    # def height_in_points= num
+    #   set_height_in_points num.to_f
+    # end
 
     def poi_row
       @row

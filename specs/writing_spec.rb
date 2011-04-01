@@ -18,7 +18,7 @@ describe "writing Workbooks" do
     book.filename.should == name
     book['Timesheet!A3'].should == 'Yegor Kozlov'
     book.cell('Timesheet!J13').formula_value.should == 'SUM(J3:J12)'
-    FileUtils.rm_f name
+    # FileUtils.rm_f name
   end
   
   def create_timesheet_spreadsheet name='specs/data/timesheet.xlsx'
@@ -42,10 +42,10 @@ describe "writing Workbooks" do
                                     :alignment => :align_center, :vertical_alignment => :vertical_center
 
     sheet = book.create_sheet 'Timesheet'
-    # print_setup = sheet.print_setup
-    # print_setup.landscape = true
-    # sheet.fit_to_page = true
-    # sheet.horizontally_center = true
+    print_setup = sheet.print_setup
+    print_setup.landscape = true
+    sheet.fit_to_page = true
+    sheet.horizontally_center = true
     
     title_row = sheet.rows[0]
     title_row.height_in_points = 45

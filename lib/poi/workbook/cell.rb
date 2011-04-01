@@ -116,9 +116,8 @@ module POI
       @cell
     end
     
-    def style= a_style
-      set_cell_style a_style
-    end
+    # :cell_style= comes from the Façade superclass
+    alias :style= :cell_style=
     
     def style! options
       self.style = @row.worksheet.workbook.create_style(options)
