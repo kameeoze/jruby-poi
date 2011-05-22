@@ -1,4 +1,5 @@
 require 'rubygems'
+
 require 'bundler'
 begin
   Bundler.setup(:default, :development)
@@ -7,10 +8,13 @@ rescue Bundler::BundlerError => e
   $stderr.puts "Run `bundle install` to install missing gems"
   exit e.status_code
 end
+
 require 'rake'
-
-
 require 'jeweler'
+require 'rspec/core'
+require 'rspec/core/rake_task'
+
+# gemify
 Jeweler::Tasks.new do |gemspec|
   gemspec.name = "jruby-poi"
   gemspec.summary = "Apache POI class library for jruby"
@@ -21,9 +25,10 @@ Jeweler::Tasks.new do |gemspec|
   gemspec.authors = ["Scott Deming", "Jason Rogers"]
 end
 
-require 'rspec/core'
-require 'rspec/core/rake_task'
+# test
 RSpec::Core::RakeTask.new(:spec)
 RSpec::Core::RakeTask.new(:rcov) do |spec|
   spec.rcov = true
 end
+
+task :default => :spec
