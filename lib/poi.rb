@@ -8,6 +8,8 @@ require File.join(JRUBY_POI_LIB_PATH, 'poi-ooxml-schemas-3.7-20101029.jar')
 require File.join(JRUBY_POI_LIB_PATH, 'poi-scratchpad-3.7-20101029.jar')
 require File.join(JRUBY_POI_LIB_PATH, 'ooxml-lib', 'xmlbeans-2.3.0.jar')
 require File.join(JRUBY_POI_LIB_PATH, 'ooxml-lib', 'dom4j-1.6.1.jar')
+require File.join(JRUBY_POI_LIB_PATH, 'ooxml-lib', 'geronimo-stax-api_1.0_spec-1.0.jar')
+
 
 # Ruby
 require File.join(JRUBY_POI_LIB_PATH, 'poi', 'workbook')
