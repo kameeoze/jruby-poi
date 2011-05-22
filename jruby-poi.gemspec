@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{jruby-poi}
-  s.version = "0.7.2"
+  s.version = "0.8.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Scott Deming", "Jason Rogers"]
-  s.date = %q{2011-03-31}
+  s.date = %q{2011-05-22}
   s.description = %q{A rubyesque library for manipulating spreadsheets and other document types for jruby, using Apache POI.}
   s.email = ["sdeming@makefile.com", "jacaetevha@gmail.com"]
   s.executables = ["autospec", "htmldiff", "ldiff", "rdebug", "rspec"]
@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
     "README.markdown"
   ]
   s.files = [
+    ".travis.yml",
     "Gemfile",
     "Gemfile.lock",
     "LICENSE",
@@ -34,12 +35,11 @@ Gem::Specification.new do |s|
     "lib/ooxml-lib/dom4j-1.6.1.jar",
     "lib/ooxml-lib/geronimo-stax-api_1.0_spec-1.0.jar",
     "lib/ooxml-lib/xmlbeans-2.3.0.jar",
-    "lib/poi-3.6-20091214.jar",
-    "lib/poi-contrib-3.6-20091214.jar",
-    "lib/poi-examples-3.6-20091214.jar",
-    "lib/poi-ooxml-3.6-20091214.jar",
-    "lib/poi-ooxml-schemas-3.6-20091214.jar",
-    "lib/poi-scratchpad-3.6-20091214.jar",
+    "lib/poi-3.7-20101029.jar",
+    "lib/poi-examples-3.7-20101029.jar",
+    "lib/poi-ooxml-3.7-20101029.jar",
+    "lib/poi-ooxml-schemas-3.7-20101029.jar",
+    "lib/poi-scratchpad-3.7-20101029.jar",
     "lib/poi.rb",
     "lib/poi/workbook.rb",
     "lib/poi/workbook/area.rb",
@@ -48,39 +48,50 @@ Gem::Specification.new do |s|
     "lib/poi/workbook/row.rb",
     "lib/poi/workbook/workbook.rb",
     "lib/poi/workbook/worksheet.rb",
-    "spec_debug.sh",
-    "specs/data/simple_with_picture.ods",
-    "specs/data/simple_with_picture.xls",
-    "specs/data/spreadsheet.ods",
-    "specs/data/timesheet.xlsx",
-    "specs/data/various_samples.xlsx",
-    "specs/facade_spec.rb",
-    "specs/io_spec.rb",
-    "specs/spec_helper.rb",
-    "specs/support/java/jrubypoi/MockOutputStream.java",
-    "specs/support/java/support.jar",
-    "specs/support/matchers/cell_matcher.rb",
-    "specs/workbook_spec.rb",
-    "specs/writing_spec.rb"
+    "spec/data/simple_with_picture.ods",
+    "spec/data/simple_with_picture.xls",
+    "spec/data/spreadsheet.ods",
+    "spec/data/timesheet.xlsx",
+    "spec/data/various_samples.xlsx",
+    "spec/facade_spec.rb",
+    "spec/io_spec.rb",
+    "spec/spec_helper.rb",
+    "spec/support/java/jrubypoi/MockOutputStream.java",
+    "spec/support/java/support.jar",
+    "spec/support/matchers/cell_matcher.rb",
+    "spec/workbook_spec.rb",
+    "spec/writing_spec.rb",
+    "spec_debug.sh"
   ]
-  s.homepage = %q{http://github.com/sdeming/jruby-poi}
+  s.homepage = %q{http://github.com/kameeoze/jruby-poi}
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.5.1}
   s.summary = %q{Apache POI class library for jruby}
+  s.test_files = [
+    "spec/facade_spec.rb",
+    "spec/io_spec.rb",
+    "spec/spec_helper.rb",
+    "spec/support/matchers/cell_matcher.rb",
+    "spec/workbook_spec.rb",
+    "spec/writing_spec.rb"
+  ]
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_development_dependency(%q<rspec>, [">= 0"])
-      s.add_development_dependency(%q<ruby-debug>, [">= 0"])
+      s.add_development_dependency(%q<rspec>, [">= 2.5.0"])
+      s.add_development_dependency(%q<jeweler>, ["~> 1.5.2"])
+      s.add_development_dependency(%q<rcov>, [">= 0"])
     else
-      s.add_dependency(%q<rspec>, [">= 0"])
-      s.add_dependency(%q<ruby-debug>, [">= 0"])
+      s.add_dependency(%q<rspec>, [">= 2.5.0"])
+      s.add_dependency(%q<jeweler>, ["~> 1.5.2"])
+      s.add_dependency(%q<rcov>, [">= 0"])
     end
   else
-    s.add_dependency(%q<rspec>, [">= 0"])
-    s.add_dependency(%q<ruby-debug>, [">= 0"])
+    s.add_dependency(%q<rspec>, [">= 2.5.0"])
+    s.add_dependency(%q<jeweler>, ["~> 1.5.2"])
+    s.add_dependency(%q<rcov>, [">= 0"])
   end
 end
 
