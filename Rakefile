@@ -24,6 +24,7 @@ Jeweler::Tasks.new do |gemspec|
   gemspec.homepage = "http://github.com/kameeoze/jruby-poi"
   gemspec.authors = ["Scott Deming", "Jason Rogers"]
 end
+Jeweler::RubygemsDotOrgTasks.new
 
 # test
 RSpec::Core::RakeTask.new(:spec)
