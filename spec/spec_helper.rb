@@ -1,4 +1,5 @@
-$stderr.puts "included spec_helper.rb"
+require 'spec_helper'
+
 RSpec.configure do |c|
   c.filter_run_excluding :unimplemented => true
 end

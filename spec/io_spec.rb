@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe POI::Workbook do
   before :each do
     @mock_output_stream = nil
