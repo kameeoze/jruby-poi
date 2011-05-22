@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{jruby-poi}
-  s.version = "0.8.0"
+  s.version = "0.8.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Scott Deming", "Jason Rogers"]
@@ -64,6 +64,7 @@ Gem::Specification.new do |s|
     "spec_debug.sh"
   ]
   s.homepage = %q{http://github.com/kameeoze/jruby-poi}
+  s.licenses = ["Apache"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.5.1}
   s.summary = %q{Apache POI class library for jruby}
