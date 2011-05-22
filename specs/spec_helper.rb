@@ -8,6 +8,3 @@ class TestDataFile
     File.expand_path(File.join(File.dirname(__FILE__), 'data', name))
   end
 end
-
-RSpec.configure do |config|
-end
