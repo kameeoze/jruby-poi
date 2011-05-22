@@ -66,7 +66,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/kameeoze/jruby-poi}
   s.licenses = ["Apache"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.5.1}
+  s.rubygems_version = %q{1.6.2}
   s.summary = %q{Apache POI class library for jruby}
   s.test_files = [
     "spec/facade_spec.rb",
