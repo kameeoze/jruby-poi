@@ -1,5 +1,3 @@
-require File.join(File.dirname(__FILE__), 'spec_helper')
-
 describe POI::Workbook do
   before :each do
     @mock_output_stream = nil
@@ -35,7 +33,7 @@ describe POI::Workbook do
     book.should be_kind_of POI::Workbook
   end
 
-  it "should read an ods file" do 
+  it "should read an ods file", :unimplemented => true do 
     name = TestDataFile.expand_path("spreadsheet.ods")
     book = nil
     lambda { book = POI::Workbook.open(name) }.should_not raise_exception

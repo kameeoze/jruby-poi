@@ -1,4 +1,3 @@
-require File.join(File.dirname(__FILE__), 'spec_helper')
 require 'date'
 require 'stringio'
 
@@ -10,7 +9,7 @@ describe "writing Workbooks" do
   end
   
   it "should create a new workbook and write something to it" do
-    name = "specs/data/timesheet-#{Time.now.strftime('%Y%m%d%H%M%S%s')}.xlsx"
+    name = "spec/data/timesheet-#{Time.now.strftime('%Y%m%d%H%M%S%s')}.xlsx"
     create_timesheet_spreadsheet(name)
     book = POI::Workbook.open(name)
     book.worksheets.size.should == 1
@@ -21,7 +20,7 @@ describe "writing Workbooks" do
     FileUtils.rm_f name
   end
   
-  def create_timesheet_spreadsheet name='specs/data/timesheet.xlsx'
+  def create_timesheet_spreadsheet name='spec/data/timesheet.xlsx'
     titles = ["Person",	"ID", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun", "Total\nHrs", "Overtime\nHrs", "Regular\nHrs"]
     sample_data = [
       ["Yegor Kozlov", "YK", 5.0, 8.0, 10.0, 5.0, 5.0, 7.0, 6.0],

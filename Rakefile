@@ -1,3 +1,6 @@
+require 'bundler/setup'
+require 'rspec/core/rake_task'
+
 begin
   require 'jeweler'
   
@@ -6,7 +9,7 @@ begin
     gemspec.summary = "Apache POI class library for jruby"
     gemspec.description = "A rubyesque library for manipulating spreadsheets and other document types for jruby, using Apache POI."
     gemspec.email = ["sdeming@makefile.com", "jacaetevha@gmail.com"]
-    gemspec.homepage = "http://github.com/sdeming/jruby-poi"
+    gemspec.homepage = "http://github.com/kameeoze/jruby-poi"
     gemspec.authors = ["Scott Deming", "Jason Rogers"]
   end
 rescue LoadError
@@ -14,19 +17,13 @@ rescue LoadError
 end
 
 begin
-  require 'rspec/core/rake_task'
   task :default => :spec
 
   desc "Run all examples"
-  RSpec::Core::RakeTask.new do |t|
-    t.pattern = 'specs/**/*.rb'
-    t.rspec_opts = ['-c']
-  end
+  RSpec::Core::RakeTask.new(:spec)
 
-  desc "Run all examples with RCov"
+  desc "Run all examples with rcov"
   RSpec::Core::RakeTask.new(:coverage) do |t|
-    t.pattern = 'specs/**/*.rb'
-    t.rspec_opts = ['-c']
     t.rcov = true
     t.rcov_opts = ['--include', '/lib/', '--exclude', '/gems/,/^specs/,/^.eval.$/']
   end

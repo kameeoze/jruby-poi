@@ -1,5 +1,3 @@
-require File.join(File.dirname(__FILE__), 'spec_helper')
-
 describe "POI.Facade" do
   it "should create specialized methods for boolean methods, getters, and setters" do
     book = POI::Workbook.create('foo.xlsx')
