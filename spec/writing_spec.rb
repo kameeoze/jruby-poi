@@ -11,7 +11,7 @@ describe "writing Workbooks" do
   end
   
   it "should create a new workbook and write something to it" do
-    name = "spec/data/timesheet-#{Time.now.strftime('%Y%m%d%H%M%S%s')}.xlsx"
+    name = TestDataFile.expand_path("timesheet-#{Time.now.strftime('%Y%m%d%H%M%S%s')}.xlsx")
     create_timesheet_spreadsheet(name)
     book = POI::Workbook.open(name)
     book.worksheets.size.should == 1
