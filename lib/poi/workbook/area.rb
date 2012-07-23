@@ -7,7 +7,7 @@ module POI
     def in workbook
       if single_cell_reference?
         ref = area.all_referenced_cells.first
-        return [workbook.single_cell, ref]
+        return [workbook.single_cell(ref)]
       end
       
       begin
