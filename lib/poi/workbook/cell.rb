@@ -128,11 +128,11 @@ module POI
         return nil if cell_value.nil?
         
         case cell_value.cell_type
-        when CELL_TYPE_BLANK: nil
-        when CELL_TYPE_BOOLEAN: cell_value.boolean_value
-        when CELL_TYPE_ERROR: error_value_from(cell_value.error_value)
-        when CELL_TYPE_NUMERIC: numeric_value_from(cell_value)
-        when CELL_TYPE_STRING: cell_value.string_value
+        when CELL_TYPE_BLANK   then nil
+        when CELL_TYPE_BOOLEAN then cell_value.boolean_value
+        when CELL_TYPE_ERROR   then error_value_from(cell_value.error_value)
+        when CELL_TYPE_NUMERIC then numeric_value_from(cell_value)
+        when CELL_TYPE_STRING  then cell_value.string_value
         else
           raise "unhandled cell type[#{cell_value.cell_type}]"
         end
@@ -142,11 +142,11 @@ module POI
         return nil if cell_type.nil?
         begin
           case cell_type
-          when CELL_TYPE_BLANK: nil
-          when CELL_TYPE_BOOLEAN: CELL_VALUE.value_of(poi_cell.boolean_cell_value)
-          when CELL_TYPE_FORMULA: cell_value_for_type(poi_cell.cached_formula_result_type)
-          when CELL_TYPE_STRING: CELL_VALUE.new(poi_cell.string_cell_value)
-          when CELL_TYPE_ERROR, CELL_TYPE_NUMERIC: CELL_VALUE.new(poi_cell.numeric_cell_value)
+          when CELL_TYPE_BLANK   then nil
+          when CELL_TYPE_BOOLEAN then CELL_VALUE.value_of(poi_cell.boolean_cell_value)
+          when CELL_TYPE_FORMULA then cell_value_for_type(poi_cell.cached_formula_result_type)
+          when CELL_TYPE_STRING  then CELL_VALUE.new(poi_cell.string_cell_value)
+          when CELL_TYPE_ERROR, CELL_TYPE_NUMERIC then CELL_VALUE.new(poi_cell.numeric_cell_value)
           else
             raise "unhandled cell type[#{poi_cell.cell_type}]"
           end
