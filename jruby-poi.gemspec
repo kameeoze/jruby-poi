@@ -8,11 +8,11 @@ Gem::Specification.new do |s|
   s.version = "0.8.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Scott Deming", "Jason Rogers"]
-  s.date = %q{2011-05-22}
+  s.authors = [%q{Scott Deming}, %q{Jason Rogers}]
+  s.date = %q{2012-07-23}
   s.description = %q{A rubyesque library for manipulating spreadsheets and other document types for jruby, using Apache POI.}
-  s.email = ["sdeming@makefile.com", "jacaetevha@gmail.com"]
-  s.executables = ["autospec", "htmldiff", "ldiff", "rdebug", "rspec"]
+  s.email = [%q{sdeming@makefile.com}, %q{jacaetevha@gmail.com}]
+  s.executables = [%q{autospec}, %q{htmldiff}, %q{ldiff}, %q{rdebug}, %q{rspec}]
   s.extra_rdoc_files = [
     "LICENSE",
     "README.markdown"
@@ -64,27 +64,24 @@ Gem::Specification.new do |s|
     "spec_debug.sh"
   ]
   s.homepage = %q{http://github.com/kameeoze/jruby-poi}
-  s.licenses = ["Apache"]
-  s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.5.1}
+  s.licenses = [%q{Apache}]
+  s.require_paths = [%q{lib}]
+  s.rubygems_version = %q{1.8.9}
   s.summary = %q{Apache POI class library for jruby}
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_development_dependency(%q<rspec>, [">= 2.5.0"])
-      s.add_development_dependency(%q<jeweler>, [">= 1.6.0"])
-      s.add_development_dependency(%q<rcov>, [">= 0"])
+      s.add_development_dependency(%q<rspec>, [">= 2.11.0"])
+      s.add_development_dependency(%q<jeweler>, [">= 1.8.4"])
     else
-      s.add_dependency(%q<rspec>, [">= 2.5.0"])
-      s.add_dependency(%q<jeweler>, [">= 1.6.0"])
-      s.add_dependency(%q<rcov>, [">= 0"])
+      s.add_dependency(%q<rspec>, [">= 2.11.0"])
+      s.add_dependency(%q<jeweler>, [">= 1.8.4"])
     end
   else
-    s.add_dependency(%q<rspec>, [">= 2.5.0"])
-    s.add_dependency(%q<jeweler>, [">= 1.6.0"])
-    s.add_dependency(%q<rcov>, [">= 0"])
+    s.add_dependency(%q<rspec>, [">= 2.11.0"])
+    s.add_dependency(%q<jeweler>, [">= 1.8.4"])
   end
 end
 
