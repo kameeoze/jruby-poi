@@ -1,2 +1,4 @@
+language: ruby
 rvm:
-  - jruby
+  - jruby-18mode
+  - jruby-19mode
