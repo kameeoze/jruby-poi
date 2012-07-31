@@ -35,7 +35,7 @@ module POI
         
           # ref = POI::CELL_REF.new(c.format_as_string)
           cell = workbook.single_cell cell_ref
-          (by_column[cell_ref.cell_ref_parts.collect.last] ||= []) << cell
+          (by_column[cell_ref.cell_ref_parts.to_a.last] ||= []) << cell
         end
                 
         by_column.each do |key, cells|

@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 require 'date'
 require 'stringio'
 
@@ -92,7 +90,7 @@ describe "writing Workbooks" do
     cell.value = 'Total Hrs:'
     (2...12).each do | cell_index |
       cell = sum_row[cell_index]
-      column = (?A + cell_index).chr
+      column = (?A.ord + cell_index).chr
       cell.formula = "SUM(#{column}3:#{column}12)"
       if cell_index > 9
         cell.style = form2_style

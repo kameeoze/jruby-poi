@@ -128,8 +128,8 @@ describe POI::Worksheets do
       sheet.should be_kind_of POI::Worksheet
     end
 
-    book.worksheets.size.should == 5
-    book.worksheets.collect.size.should == 5
+    book.worksheets.count.should == 5
+    book.worksheets.collect.count.should == 5
   end
   
   it "returns cells when passing a cell reference" do
@@ -155,8 +155,8 @@ describe POI::Rows do
       row.should be_kind_of POI::Row
     end
 
-    sheet.rows.size.should == 7
-    sheet.rows.collect.size.should == 7
+    sheet.rows.count.should == 7
+    sheet.rows.collect.count.should == 7
   end
 end
 
@@ -180,8 +180,8 @@ describe POI::Cells do
     cells = rows[0].cells
 
     cells.should be_kind_of Enumerable
-    cells.size.should == 1
-    cells.collect.size.should == 1
+    cells.count.should == 1
+    cells.collect.count.should == 1
   end
 end
 
