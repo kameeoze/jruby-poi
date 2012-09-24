@@ -31,15 +31,21 @@ module POI
       instance
     end
     
-    def self.create(filename)
-      self.new(filename, nil)
+    def self.create(filename, options={})
+      self.new(filename, nil, options)
     end
     
     attr_reader :filename
 
-    def initialize(filename, io_stream)
+    def initialize(filename, io_stream, options={})
       @filename = filename
-      @workbook = io_stream ? org.apache.poi.ss.usermodel.WorkbookFactory.create(io_stream) : org.apache.poi.xssf.usermodel.XSSFWorkbook.new
+      @workbook = if io_stream
+        org.apache.poi.ss.usermodel.WorkbookFactory.create(io_stream)
+      elsif options[:format] == :hssf
+        org.apache.poi.hssf.usermodel.HSSFWorkbook.new
+      else
+        org.apache.poi.xssf.usermodel.XSSFWorkbook.new
+      end
     end
     
     def formula_evaluator

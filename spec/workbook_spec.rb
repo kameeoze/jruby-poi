@@ -24,7 +24,22 @@ describe POI::Workbook do
     book.worksheets.size.should == 5
     book.filename.should =~ /spreadsheet.xlsx$/
   end
-  
+
+  it "should create an HSSFWorkbook when passed a :format => :hssf option" do
+    book = POI::Workbook.create('test.xls', :format => :hssf)
+    book.poi_workbook.should be_kind_of(org.apache.poi.hssf.usermodel.HSSFWorkbook)
+  end
+
+  it "should create an XSSFWorkbook when passed a :format => :xssf option" do
+    book = POI::Workbook.create('test.xlsx', :format => :xssf)
+    book.poi_workbook.should be_kind_of(org.apache.poi.xssf.usermodel.XSSFWorkbook)
+  end
+
+  it "should create an XSSFWorkbook by default" do
+    book = POI::Workbook.create('test.xlsx')
+    book.poi_workbook.should be_kind_of(org.apache.poi.xssf.usermodel.XSSFWorkbook)
+  end
+
   it "should return a column of cells by reference" do
     name = TestDataFile.expand_path("various_samples.xlsx")
     book = POI::Workbook.open(name)
