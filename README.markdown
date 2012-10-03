@@ -64,6 +64,8 @@ TODO
 * fix reading ODS files -- we have a broken spec for this in io_spec.rb
 * add APIs for updating cells in a spreadsheet
 * create API for non-spreadsheet files
+* rdocs
+* tutorials, and/or better samples
 
 Contributors
 ============
