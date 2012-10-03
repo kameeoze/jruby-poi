@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.date = %q{2012-07-23}
   s.description = %q{A rubyesque library for manipulating spreadsheets and other document types for jruby, using Apache POI.}
   s.email = [%q{sdeming@makefile.com}, %q{jacaetevha@gmail.com}]
-  s.executables = [%q{autospec}, %q{htmldiff}, %q{ldiff}, %q{rdebug}, %q{rspec}]
+  s.executables = []
   s.extra_rdoc_files = [
     "LICENSE",
     "README.markdown"
@@ -26,11 +26,6 @@ Gem::Specification.new do |s|
     "README.markdown",
     "Rakefile",
     "VERSION",
-    "bin/autospec",
-    "bin/htmldiff",
-    "bin/ldiff",
-    "bin/rdebug",
-    "bin/rspec",
     "jruby-poi.gemspec",
     "lib/ooxml-lib/dom4j-1.6.1.jar",
     "lib/ooxml-lib/stax-api-1.0.1.jar",
