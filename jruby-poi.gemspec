@@ -4,15 +4,14 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{jruby-poi}
+  s.name = "jruby-poi"
   s.version = "0.9.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = [%q{Scott Deming}, %q{Jason Rogers}]
-  s.date = %q{2012-07-23}
-  s.description = %q{A rubyesque library for manipulating spreadsheets and other document types for jruby, using Apache POI.}
-  s.email = [%q{sdeming@makefile.com}, %q{jacaetevha@gmail.com}]
-  s.executables = []
+  s.authors = ["Scott Deming", "Jason Rogers"]
+  s.date = "2012-10-15"
+  s.description = "A rubyesque library for manipulating spreadsheets and other document types for jruby, using Apache POI."
+  s.email = ["sdeming@makefile.com", "jacaetevha@gmail.com"]
   s.extra_rdoc_files = [
     "LICENSE",
     "README.markdown"
@@ -59,11 +58,11 @@ Gem::Specification.new do |s|
     "spec/writing_spec.rb",
     "spec_debug.sh"
   ]
-  s.homepage = %q{http://github.com/kameeoze/jruby-poi}
-  s.licenses = [%q{Apache}]
-  s.require_paths = [%q{lib}]
-  s.rubygems_version = %q{1.8.9}
-  s.summary = %q{Apache POI class library for jruby}
+  s.homepage = "http://github.com/kameeoze/jruby-poi"
+  s.licenses = ["Apache"]
+  s.require_paths = ["lib"]
+  s.rubygems_version = "1.8.24"
+  s.summary = "Apache POI class library for jruby"
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
