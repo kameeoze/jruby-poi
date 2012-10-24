@@ -12,3 +12,4 @@ pkg
 documentation
 coverage
 .bundle
+.tddium*

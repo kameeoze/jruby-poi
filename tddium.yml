@@ -1,5 +1,5 @@
 :tddium:
- :ruby_version: ruby-1.9.2-p312 jruby-1.6.7
+ :ruby_version: jruby-1.6.7.2
  :tests:
   - type: custom
     invocation: single
