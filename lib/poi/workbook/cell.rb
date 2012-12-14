@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 module POI
   class Cells
     include Enumerable
@@ -52,8 +53,8 @@ module POI
       elsif poi_cell.cell_type == CELL_TYPE_FORMULA && 
             poi_cell.cached_formula_result_type == CELL_TYPE_ERROR
             
-        # breaks Law of Demeter by reaching into the Row's Worksheet, but it makes sense to do in this case
-        value_of(@row.worksheet.workbook.formula_evaluator.evaluate(poi_cell))
+        cell_value = formula_evaluator.evaluate(poi_cell)
+        cell_value && error_value_from(cell_value.error_value)
       else
         nil
       end
@@ -66,7 +67,7 @@ module POI
     
     def value
       return nil if poi_cell.nil?
-      value_of(cell_value_for_type(poi_cell.cell_type))
+      cast_value
     end
 
     def formula= new_value
@@ -124,51 +125,34 @@ module POI
     end
     
     private
-      def value_of(cell_value)
-        return nil if cell_value.nil?
-        
-        case cell_value.cell_type
+      def cast_value(type = cell_type)
+        case type
         when CELL_TYPE_BLANK   then nil
-        when CELL_TYPE_BOOLEAN then cell_value.boolean_value
-        when CELL_TYPE_ERROR   then error_value_from(cell_value.error_value)
-        when CELL_TYPE_NUMERIC then numeric_value_from(cell_value)
-        when CELL_TYPE_STRING  then cell_value.string_value
-        else
-          raise "unhandled cell type[#{cell_value.cell_type}]"
-        end
-      end
-      
-      def cell_value_for_type(cell_type)
-        return nil if cell_type.nil?
-        begin
-          case cell_type
-          when CELL_TYPE_BLANK   then nil
-          when CELL_TYPE_BOOLEAN then CELL_VALUE.value_of(poi_cell.boolean_cell_value)
-          when CELL_TYPE_FORMULA then cell_value_for_type(poi_cell.cached_formula_result_type)
-          when CELL_TYPE_STRING  then CELL_VALUE.new(poi_cell.string_cell_value)
-          when CELL_TYPE_ERROR, CELL_TYPE_NUMERIC then CELL_VALUE.new(poi_cell.numeric_cell_value)
+        when CELL_TYPE_BOOLEAN then get_boolean_cell_value
+        when CELL_TYPE_ERROR   then nil
+        when CELL_TYPE_FORMULA then cast_value(poi_cell.cached_formula_result_type)
+        when CELL_TYPE_STRING  then get_string_cell_value
+        when CELL_TYPE_NUMERIC
+          if DATE_UTIL.cell_date_formatted(poi_cell)
+            Date.parse(get_date_cell_value.to_s)
           else
-            raise "unhandled cell type[#{poi_cell.cell_type}]"
+            get_numeric_cell_value
           end
-        rescue
-          nil
+        else
+          raise "unhandled cell type[#{type}]"
         end
       end
-      
+
+      def workbook
+        @row.worksheet.workbook
+      end
+
+      def formula_evaluator
+        workbook.formula_evaluator
+      end
+
       def error_value_from(cell_value)
         org.apache.poi.ss.usermodel.ErrorConstants.text(cell_value)
-      end
-      
-      def formula_evaluator_for(workbook)
-        workbook.creation_helper.create_formula_evaluator
-      end
-      
-      def numeric_value_from(cell_value)
-        if DATE_UTIL.cell_date_formatted(poi_cell)
-          Date.parse(DATE_UTIL.get_java_date(cell_value.number_value).to_s)
-        else
-          cell_value.number_value
-        end
       end
   end
 end
