@@ -3,23 +3,24 @@ require 'spec_helper'
 require 'date'
 require 'stringio'
 
+VARIOUS_SAMPLES_PATH = TestDataFile.expand_path("various_samples.xlsx")
+
 describe POI::Workbook do
   it "should open a workbook and allow access to its worksheets" do
-    name = TestDataFile.expand_path("various_samples.xlsx")
-    book = POI::Workbook.open(name)
+    book = POI::Workbook.open(VARIOUS_SAMPLES_PATH)
     book.worksheets.size.should == 5
-    book.filename.should == name
+    book.filename.should == VARIOUS_SAMPLES_PATH
   end
 
   it "should be able to create a Workbook from an IO object" do
-    content = StringIO.new(open(TestDataFile.expand_path("various_samples.xlsx"), 'rb'){|f| f.read})
+    content = StringIO.new(open(VARIOUS_SAMPLES_PATH, 'rb'){|f| f.read})
     book = POI::Workbook.open(content)
     book.worksheets.size.should == 5
     book.filename.should =~ /spreadsheet.xlsx$/
   end
 
   it "should be able to create a Workbook from a Java input stream" do
-    content = java.io.FileInputStream.new(TestDataFile.expand_path("various_samples.xlsx"))
+    content = java.io.FileInputStream.new(VARIOUS_SAMPLES_PATH)
     book = POI::Workbook.open(content)
     book.worksheets.size.should == 5
     book.filename.should =~ /spreadsheet.xlsx$/
@@ -41,8 +42,7 @@ describe POI::Workbook do
   end
 
   it "should return a column of cells by reference" do
-    name = TestDataFile.expand_path("various_samples.xlsx")
-    book = POI::Workbook.open(name)
+    book = POI::Workbook.open(VARIOUS_SAMPLES_PATH)
     book["numbers!$A"].should == book['numbers'].rows.collect{|e| e[0].value}
     book["numbers!A"].should == book['numbers'].rows.collect{|e| e[0].value}
     book["numbers!C"].should == book['numbers'].rows.collect{|e| e[2].value}
@@ -51,8 +51,7 @@ describe POI::Workbook do
   end
   
   it "should return cells by reference" do
-    name = TestDataFile.expand_path("various_samples.xlsx")
-    book = POI::Workbook.open(name)
+    book = POI::Workbook.open(VARIOUS_SAMPLES_PATH)
     book.cell("numbers!A1").value.should == 'NUM'
     book.cell("numbers!A2").to_s.should == '1.0'
     book.cell("numbers!A3").to_s.should == '2.0'
@@ -77,8 +76,7 @@ describe POI::Workbook do
   end
   
   it "should handle named cell ranges" do
-    name = TestDataFile.expand_path("various_samples.xlsx")
-    book = POI::Workbook.open(name)
+    book = POI::Workbook.open(VARIOUS_SAMPLES_PATH)
 
     book.named_ranges.length.should == 3
     book.named_ranges.collect{|e| e.name}.should == %w{four_times_six NAMES nums}
@@ -97,14 +95,12 @@ describe POI::Workbook do
   end
   
   it "should return an array of cell values by reference" do
-    name = TestDataFile.expand_path("various_samples.xlsx")
-    book = POI::Workbook.open(name)
+    book = POI::Workbook.open(VARIOUS_SAMPLES_PATH)
     book['dates!A2:A16'].should == (Date.parse('2010-02-28')..Date.parse('2010-03-14')).to_a
   end
   
   it "should return cell values by reference" do
-    name = TestDataFile.expand_path("various_samples.xlsx")
-    book = POI::Workbook.open(name)
+    book = POI::Workbook.open(VARIOUS_SAMPLES_PATH)
 
     book['text & pic!A10'].should == 'This is an Excel XLSX workbook.'
     book['bools & errors!B3'].should == true
@@ -115,10 +111,9 @@ describe POI::Workbook do
 end
 
 describe POI::Worksheets do
-  it "should allow indexing worksheets by ordinal" do
-    name = TestDataFile.expand_path("various_samples.xlsx")
-    book = POI::Workbook.open(name)
+  let(:book) { POI::Workbook.open(VARIOUS_SAMPLES_PATH) }
 
+  it "should allow indexing worksheets by ordinal" do
     book.worksheets[0].name.should == "text & pic"
     book.worksheets[1].name.should == "numbers"
     book.worksheets[2].name.should == "dates"
@@ -126,17 +121,12 @@ describe POI::Worksheets do
   end
 
   it "should allow indexing worksheets by name" do
-    name = TestDataFile.expand_path("various_samples.xlsx")
-    book = POI::Workbook.open(name)
-
     book.worksheets["text & pic"].name.should == "text & pic"
     book.worksheets["numbers"].name.should == "numbers"
     book.worksheets["dates"].name.should == "dates"
   end
 
   it "should be enumerable" do
-    name = TestDataFile.expand_path("various_samples.xlsx")
-    book = POI::Workbook.open(name)
     book.worksheets.should be_kind_of Enumerable
 
     book.worksheets.each do |sheet|
@@ -148,8 +138,6 @@ describe POI::Worksheets do
   end
   
   it "returns cells when passing a cell reference" do
-    name = TestDataFile.expand_path("various_samples.xlsx")
-    book = POI::Workbook.open(name)
     book['dates']['A2'].to_s.should == '2010-02-28'
     book['dates']['a2'].to_s.should == '2010-02-28'
     book['dates']['B2'].to_s.should == '2010-03-14'
@@ -161,8 +149,7 @@ end
 
 describe POI::Rows do
   it "should be enumerable" do
-    name = TestDataFile.expand_path("various_samples.xlsx")
-    book = POI::Workbook.open(name)
+    book = POI::Workbook.open(VARIOUS_SAMPLES_PATH)
     sheet = book.worksheets["text & pic"]
     sheet.rows.should be_kind_of Enumerable
     
@@ -176,19 +163,8 @@ describe POI::Rows do
 end
 
 describe POI::Cells do
-  before :each do
-    @name = TestDataFile.expand_path("various_samples.xlsx")
-    @book = POI::Workbook.open(@name)
-  end
+  let(:book) { POI::Workbook.open(VARIOUS_SAMPLES_PATH) }
 
-  def book
-    @book
-  end
-
-  def name
-    @name
-  end
-  
   it "should be enumerable" do
     sheet = book.worksheets["text & pic"]
     rows = sheet.rows
@@ -201,18 +177,7 @@ describe POI::Cells do
 end
 
 describe POI::Cell do
-  before :each do
-    @name = TestDataFile.expand_path("various_samples.xlsx")
-    @book = POI::Workbook.open(@name)
-  end
-
-  def book
-    @book
-  end
-
-  def name
-    @name
-  end
+  let(:book) { POI::Workbook.open(VARIOUS_SAMPLES_PATH) }
 
   it "should provide dates for date cells" do
     sheet = book.worksheets["dates"]
@@ -227,6 +192,7 @@ describe POI::Cell do
         row = index + 1
         rows[row][col].value.should equal_at_cell(date, row, col)
       end
+
     end
   end
 
