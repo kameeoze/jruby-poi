@@ -12,3 +12,4 @@ require File.join(JRUBY_POI_LIB_PATH, 'ooxml-lib', 'stax-api-1.0.1.jar')
 
 # Ruby
 require File.join(JRUBY_POI_LIB_PATH, 'poi', 'workbook')
+require 'date' # required for Date.parse
