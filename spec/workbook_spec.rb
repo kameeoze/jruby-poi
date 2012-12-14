@@ -4,6 +4,7 @@ require 'date'
 require 'stringio'
 
 VARIOUS_SAMPLES_PATH = TestDataFile.expand_path("various_samples.xlsx")
+DATES_1904_WINDOW_XLS_PATH = TestDataFile.expand_path("1904_window_dates.xls")
 
 describe POI::Workbook do
   it "should open a workbook and allow access to its worksheets" do
@@ -179,20 +180,34 @@ end
 describe POI::Cell do
   let(:book) { POI::Workbook.open(VARIOUS_SAMPLES_PATH) }
 
-  it "should provide dates for date cells" do
-    sheet = book.worksheets["dates"]
-    rows = sheet.rows
-    
-    dates_by_column = [
-      (Date.parse('2010-02-28')..Date.parse('2010-03-14')),
-      (Date.parse('2010-03-14')..Date.parse('2010-03-28')),
-      (Date.parse('2010-03-28')..Date.parse('2010-04-11'))]
-    (0..2).each do |col|
-      dates_by_column[col].each_with_index do |date, index|
-        row = index + 1
-        rows[row][col].value.should equal_at_cell(date, row, col)
-      end
+  context "1900 windowed dates" do
+    it "should provide dates for date cells" do
+      sheet = book.worksheets["dates"]
+      rows = sheet.rows
 
+      dates_by_column = [
+                         (Date.parse('2010-02-28')..Date.parse('2010-03-14')),
+                         (Date.parse('2010-03-14')..Date.parse('2010-03-28')),
+                         (Date.parse('2010-03-28')..Date.parse('2010-04-11'))]
+      (0..2).each do |col|
+        dates_by_column[col].each_with_index do |date, index|
+          row = index + 1
+          rows[row][col].value.should equal_at_cell(date, row, col)
+        end
+      end
+    end
+  end
+
+  context "1904 windowed dates" do
+    let(:book) { POI::Workbook.open(DATES_1904_WINDOW_XLS_PATH) }
+    it "returns entered dates correctly" do
+      c = book.worksheets[0].rows[1].cells[0]
+      c.value.to_s.should == "2012-01-01"
+    end
+
+    it "returns dates computed by a formula correctly" do
+      c = book.worksheets[0].rows[1].cells[3]
+      c.value.to_s.should == "2012-01-02"
     end
   end
 
