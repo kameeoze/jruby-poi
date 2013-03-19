@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+require 'date'
 module POI
   class Cells
     include Enumerable
@@ -134,7 +135,7 @@ module POI
         when CELL_TYPE_STRING  then get_string_cell_value
         when CELL_TYPE_NUMERIC
           if DATE_UTIL.cell_date_formatted(poi_cell)
-            Date.parse(get_date_cell_value.to_s)
+            DateTime.parse(get_date_cell_value.to_s)
           else
             get_numeric_cell_value
           end
