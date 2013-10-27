@@ -97,7 +97,7 @@ describe POI::Workbook do
   
   it "should return an array of cell values by reference" do
     book = POI::Workbook.open(VARIOUS_SAMPLES_PATH)
-    book['dates!A2:A16'].should == (Date.parse('2010-02-28')..Date.parse('2010-03-14')).to_a
+    book['dates!A2:A16'].map(&:to_date).should == (Date.parse('2010-02-28')..Date.parse('2010-03-14')).to_a
   end
   
   it "should return cell values by reference" do
@@ -139,12 +139,13 @@ describe POI::Worksheets do
   end
   
   it "returns cells when passing a cell reference" do
-    book['dates']['A2'].to_s.should == '2010-02-28'
-    book['dates']['a2'].to_s.should == '2010-02-28'
-    book['dates']['B2'].to_s.should == '2010-03-14'
-    book['dates']['b2'].to_s.should == '2010-03-14'
-    book['dates']['C2'].to_s.should == '2010-03-28'
-    book['dates']['c2'].to_s.should == '2010-03-28'
+    book['dates']['A2'].class.should == DateTime
+    book['dates']['A2'].to_date.should == Date.parse('2010-02-28')
+    book['dates']['a2'].to_date.should == Date.parse('2010-02-28')
+    book['dates']['B2'].to_date.should == Date.parse('2010-03-14')
+    book['dates']['b2'].to_date.should == Date.parse('2010-03-14')
+    book['dates']['C2'].to_date.should == Date.parse('2010-03-28')
+    book['dates']['c2'].to_date.should == Date.parse('2010-03-28')
   end
 end
 
@@ -186,13 +187,15 @@ describe POI::Cell do
       rows = sheet.rows
 
       dates_by_column = [
-                         (Date.parse('2010-02-28')..Date.parse('2010-03-14')),
-                         (Date.parse('2010-03-14')..Date.parse('2010-03-28')),
-                         (Date.parse('2010-03-28')..Date.parse('2010-04-11'))]
+        (DateTime.parse('2010-02-28')..DateTime.parse('2010-03-14')),
+        (DateTime.parse('2010-03-14')..DateTime.parse('2010-03-28')),
+        (DateTime.parse('2010-03-28')..DateTime.parse('2010-04-11'))
+      ]
       (0..2).each do |col|
         dates_by_column[col].each_with_index do |date, index|
           row = index + 1
-          rows[row][col].value.should equal_at_cell(date, row, col)
+          c = sheet.rows[row].cells[col]
+          c.value.to_date.should == date.to_date
         end
       end
     end
@@ -202,12 +205,12 @@ describe POI::Cell do
     let(:book) { POI::Workbook.open(DATES_1904_WINDOW_XLS_PATH) }
     it "returns entered dates correctly" do
       c = book.worksheets[0].rows[1].cells[0]
-      c.value.to_s.should == "2012-01-01"
+      c.value.to_date.should == Date.parse("2012-01-01")
     end
 
     it "returns dates computed by a formula correctly" do
       c = book.worksheets[0].rows[1].cells[3]
-      c.value.to_s.should == "2012-01-02"
+      c.value.to_date.should == Date.parse("2012-01-02")
     end
   end
 
@@ -350,9 +353,9 @@ describe POI::Cell do
   end
 
   it "should notify the workbook that I have been updated" do
-    book['dates!A10'].to_s.should == '2010-03-08'
-    book['dates!A16'].to_s.should == '2010-03-14'
-    book['dates!B2'].to_s.should == '2010-03-14'
+    book['dates!A10'].to_date.should == Date.parse('2010-03-08')
+    book['dates!A16'].to_date.should == Date.parse('2010-03-14')
+    book['dates!B2'].to_date.should == Date.parse('2010-03-14')
 
     cell = book.cell('dates!B2')
     cell.formula.should == 'A16'
@@ -361,6 +364,6 @@ describe POI::Cell do
     book.cell('dates!B2').poi_cell.should === cell.poi_cell
     book.cell('dates!B2').formula.should == 'A10 + 1'
 
-    book['dates!B2'].to_s.should == '2010-03-09'
+    book['dates!B2'].to_date.should == Date.parse('2010-03-09')
   end
 end
