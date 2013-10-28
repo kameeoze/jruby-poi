@@ -14,3 +14,12 @@ class TestDataFile
     File.expand_path(File.join(File.dirname(__FILE__), 'data', name))
   end
 end
+
+if RUBY_VERSION < '1.9'
+  class DateTime
+    def to_date
+      Date.parse(self.strftime('%Y-%m-%d'))
+    end
+  end
+end
+
