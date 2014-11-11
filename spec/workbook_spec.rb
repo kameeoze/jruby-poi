@@ -9,21 +9,21 @@ DATES_1904_WINDOW_XLS_PATH = TestDataFile.expand_path("1904_window_dates.xls")
 describe POI::Workbook do
   it "should open a workbook and allow access to its worksheets" do
     book = POI::Workbook.open(VARIOUS_SAMPLES_PATH)
-    book.worksheets.size.should == 5
+    book.worksheets.size.should == 6
     book.filename.should == VARIOUS_SAMPLES_PATH
   end
 
   it "should be able to create a Workbook from an IO object" do
     content = StringIO.new(open(VARIOUS_SAMPLES_PATH, 'rb'){|f| f.read})
     book = POI::Workbook.open(content)
-    book.worksheets.size.should == 5
+    book.worksheets.size.should == 6
     book.filename.should =~ /spreadsheet.xlsx$/
   end
 
   it "should be able to create a Workbook from a Java input stream" do
     content = java.io.FileInputStream.new(VARIOUS_SAMPLES_PATH)
     book = POI::Workbook.open(content)
-    book.worksheets.size.should == 5
+    book.worksheets.size.should == 6
     book.filename.should =~ /spreadsheet.xlsx$/
   end
 
@@ -50,14 +50,14 @@ describe POI::Workbook do
     book["numbers!$D:$D"].should == book['numbers'].rows.collect{|e| e[3].value}
     book["numbers!$c:$D"].should == {"C" => book['numbers'].rows.collect{|e| e[2].value}, "D" => book['numbers'].rows.collect{|e| e[3].value}}
   end
-  
+
   it "should return cells by reference" do
     book = POI::Workbook.open(VARIOUS_SAMPLES_PATH)
     book.cell("numbers!A1").value.should == 'NUM'
     book.cell("numbers!A2").to_s.should == '1.0'
     book.cell("numbers!A3").to_s.should == '2.0'
     book.cell("numbers!A4").to_s.should == '3.0'
-    
+
     book.cell("numbers!A10").to_s.should == '9.0'
     book.cell("numbers!B10").to_s.should == '81.0'
     book.cell("numbers!C10").to_s.should == '729.0'
@@ -75,7 +75,7 @@ describe POI::Workbook do
     book.cell(%Q{'high refs'!AO624}).value.should == 24.0
     book.cell(%Q{'high refs'!AP631}).value.should == 13.0
   end
-  
+
   it "should handle named cell ranges" do
     book = POI::Workbook.open(VARIOUS_SAMPLES_PATH)
 
@@ -85,7 +85,7 @@ describe POI::Workbook do
     book.named_ranges.collect{|e| e.formula}.should == ["'high refs'!$AO$624", "'bools & errors'!$D$2:$D$11", "'high refs'!$AP$619:$AP$631"]
     book['four_times_six'].should == 24.0
     book['nums'].should == (1..13).collect{|e| e * 1.0}
-    
+
     # NAMES is a range of empty cells
     book['NAMES'].should == [nil, nil, nil, nil, nil, nil, nil, nil, nil, nil]
     book.cell('NAMES').each do | cell |
@@ -94,12 +94,12 @@ describe POI::Workbook do
       cell.to_s.should be_empty
     end
   end
-  
+
   it "should return an array of cell values by reference" do
     book = POI::Workbook.open(VARIOUS_SAMPLES_PATH)
     book['dates!A2:A16'].map(&:to_date).should == (Date.parse('2010-02-28')..Date.parse('2010-03-14')).to_a
   end
-  
+
   it "should return cell values by reference" do
     book = POI::Workbook.open(VARIOUS_SAMPLES_PATH)
 
@@ -134,10 +134,10 @@ describe POI::Worksheets do
       sheet.should be_kind_of POI::Worksheet
     end
 
-    book.worksheets.count.should == 5
-    book.worksheets.collect.count.should == 5
+    book.worksheets.count.should == 6
+    book.worksheets.collect.count.should == 6
   end
-  
+
   it "returns cells when passing a cell reference" do
     book['dates']['A2'].class.should == DateTime
     book['dates']['A2'].to_date.should == Date.parse('2010-02-28')
@@ -154,7 +154,7 @@ describe POI::Rows do
     book = POI::Workbook.open(VARIOUS_SAMPLES_PATH)
     sheet = book.worksheets["text & pic"]
     sheet.rows.should be_kind_of Enumerable
-    
+
     sheet.rows.each do |row|
       row.should be_kind_of POI::Row
     end
@@ -217,7 +217,7 @@ describe POI::Cell do
   it "should provide numbers for numeric cells" do
     sheet = book.worksheets["numbers"]
     rows = sheet.rows
-    
+
     (1..15).each do |number|
       row = number
       rows[row][0].value.should equal_at_cell(number,            row, 0)
@@ -225,7 +225,7 @@ describe POI::Cell do
       rows[row][2].value.should equal_at_cell(number ** 3,       row, 2)
       rows[row][3].value.should equal_at_cell(Math.sqrt(number), row, 3)
     end
-    
+
     rows[9][0].to_s.should == '9.0'
     rows[9][1].to_s.should == '81.0'
     rows[9][2].to_s.should == '729.0'
@@ -273,7 +273,7 @@ describe POI::Cell do
     rows[13][0].error_value.should == '#VALUE!'
 
     lambda{ rows[14][0].value }.should_not raise_error(Java::java.lang.RuntimeException)
-    
+
     rows[6][0].to_s.should == '0.0' #'~CIRCULAR~REF~'
     rows[7][0].to_s.should == '' #'#DIV/0!'
     rows[8][0].to_s.should == '' #'#N/A'
@@ -290,13 +290,13 @@ describe POI::Cell do
     rows = sheet.rows
     rows[1][0].value.should == false
     rows[1][0].to_s.should == 'false'
-    
+
     rows[1][1].value.should == false
     rows[1][1].to_s.should == 'false'
-    
+
     rows[2][0].value.should == true
     rows[2][0].to_s.should == 'true'
-    
+
     rows[2][1].value.should == true
     rows[2][1].to_s.should == 'true'
   end
@@ -312,7 +312,7 @@ describe POI::Cell do
     rows[4][0].value.should == "XLSX"
     rows[5][0].value.should == "workbook"
     rows[9][0].value.should == 'This is an Excel XLSX workbook.'
-    
+
 
     rows[0][0].to_s.should == "This"
     rows[1][0].to_s.should == "is"
@@ -322,7 +322,7 @@ describe POI::Cell do
     rows[5][0].to_s.should == "workbook"
     rows[9][0].to_s.should == 'This is an Excel XLSX workbook.'
   end
-  
+
   it "should provide formulas instead of string-ified values" do
     sheet = book.worksheets["numbers"]
     rows = sheet.rows
@@ -342,11 +342,11 @@ describe POI::Cell do
     rows[2][0].to_s(false).should == '1=1'
     rows[2][1].to_s(false).should == 'TRUE'
     rows[14][0].to_s(false).should == 'foobar(1)'
-    
+
     sheet = book.worksheets["text & pic"]
     sheet.rows[9][0].to_s(false).should == 'CONCATENATE(A1," ", A2," ", A3," ", A4," ", A5," ", A6,".")'
   end
-  
+
   it "should handle getting values out of 'non-existent' cells" do
     sheet = book.worksheets["bools & errors"]
     sheet.rows[14][2].value.should be_nil
@@ -359,11 +359,15 @@ describe POI::Cell do
 
     cell = book.cell('dates!B2')
     cell.formula.should == 'A16'
-    
+
     cell.formula = 'A10 + 1'
     book.cell('dates!B2').poi_cell.should === cell.poi_cell
     book.cell('dates!B2').formula.should == 'A10 + 1'
 
     book['dates!B2'].to_date.should == Date.parse('2010-03-09')
+  end
+
+  it "should work with IFERROR" do
+    book['newfeatures!F6'].should == 'NOT FOUND'
   end
 end
