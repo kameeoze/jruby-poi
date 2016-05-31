@@ -11,7 +11,7 @@ module POI
     end
 
     def [](index)
-      @cells[index] ||= Cell.new(@poi_row.cell(index) || @poi_row.create_cell(index), @row)
+      @cells[index] ||= Cell.new(@poi_row.get_cell(index) || @poi_row.create_cell(index), @row)
     end
 
     def size
@@ -153,7 +153,7 @@ module POI
       end
 
       def error_value_from(cell_value)
-        org.apache.poi.ss.usermodel.ErrorConstants.text(cell_value)
+        org.apache.poi.ss.usermodel.ErrorConstants.get_text(cell_value)
       end
   end
 end

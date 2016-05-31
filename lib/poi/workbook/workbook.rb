@@ -132,7 +132,7 @@ module POI
     
     def named_ranges
       @named_ranges ||= (0...@workbook.number_of_names).collect do | idx |
-        NamedRange.new @workbook.name_at(idx), self
+        NamedRange.new @workbook.get_name_at(idx), self
       end
     end
 

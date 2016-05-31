@@ -10,7 +10,7 @@ module POI
     def [](index_or_name)
       worksheet = case
         when index_or_name.kind_of?(Numeric)
-          @poi_workbook.sheet_at(index_or_name) || @poi_workbook.create_sheet
+          @poi_workbook.get_sheet_at(index_or_name) || @poi_workbook.create_sheet
         else 
           @poi_workbook.get_sheet(index_or_name) || @poi_workbook.create_sheet(index_or_name)
       end
@@ -22,7 +22,7 @@ module POI
     end
 
     def each
-      (0...size).each { |i| yield Worksheet.new(@poi_workbook.sheet_at(i), @workbook) }
+      (0...size).each { |i| yield Worksheet.new(@poi_workbook.get_sheet_at(i), @workbook) }
     end
   end
 
