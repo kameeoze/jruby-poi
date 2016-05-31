@@ -9,7 +9,7 @@ module POI
     end
 
     def [](index)
-      @rows[index] ||= Row.new(@poi_worksheet.row(index) || @poi_worksheet.create_row(index), @worksheet)
+      @rows[index] ||= Row.new(@poi_worksheet.get_row(index) || @poi_worksheet.create_row(index), @worksheet)
     end
 
     def size 
