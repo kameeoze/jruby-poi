@@ -44,6 +44,7 @@ describe POI::Workbook do
 
   it "should return a column of cells by reference" do
     book = POI::Workbook.open(VARIOUS_SAMPLES_PATH)
+
     book["numbers!$A"].should == book['numbers'].rows.collect{|e| e[0].value}
     book["numbers!A"].should == book['numbers'].rows.collect{|e| e[0].value}
     book["numbers!C"].should == book['numbers'].rows.collect{|e| e[2].value}
@@ -62,12 +63,6 @@ describe POI::Workbook do
     book.cell("numbers!B10").to_s.should == '81.0'
     book.cell("numbers!C10").to_s.should == '729.0'
     book.cell("numbers!D10").to_s.should == '3.0'
-
-    book.cell("text & pic!A10").value.should == 'This is an Excel XLSX workbook.'
-    book.cell("bools & errors!B3").value.should == true
-    book.cell("high refs!AM619").value.should == 'This is some text'
-    book.cell("high refs!AO624").value.should == 24.0
-    book.cell("high refs!AP631").value.should == 13.0
 
     book.cell(%Q{'text & pic'!A10}).value.should == 'This is an Excel XLSX workbook.'
     book.cell(%Q{'bools & errors'!B3}).value.should == true
@@ -103,11 +98,11 @@ describe POI::Workbook do
   it "should return cell values by reference" do
     book = POI::Workbook.open(VARIOUS_SAMPLES_PATH)
 
-    book['text & pic!A10'].should == 'This is an Excel XLSX workbook.'
-    book['bools & errors!B3'].should == true
-    book['high refs!AM619'].should == 'This is some text'
-    book['high refs!AO624'].should == 24.0
-    book['high refs!AP631'].should == 13.0
+    book[%Q{'text & pic'!A10}].should == 'This is an Excel XLSX workbook.'
+    book[%Q{'bools & errors'!B3}].should == true
+    book[%Q{'high refs'!AM619}].should == 'This is some text'
+    book[%Q{'high refs'!AO624}].should == 24.0
+    book[%Q{'high refs'!AP631}].should == 13.0
   end
 end
 
@@ -272,7 +267,7 @@ describe POI::Cell do
     rows[13][0].value.should be_nil
     rows[13][0].error_value.should == '#VALUE!'
 
-    lambda{ rows[14][0].value }.should_not raise_error(Java::java.lang.RuntimeException)
+    lambda{ rows[14][0].value }.should_not raise_error
 
     rows[6][0].to_s.should == '0.0' #'~CIRCULAR~REF~'
     rows[7][0].to_s.should == '' #'#DIV/0!'

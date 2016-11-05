@@ -153,7 +153,8 @@ module POI
       end
 
       def error_value_from(cell_value)
-        org.apache.poi.ss.usermodel.ErrorConstants.get_text(cell_value)
+        #org.apache.poi.ss.usermodel.ErrorConstants.get_text(cell_value)
+        org.apache.poi.ss.usermodel.FormulaError.forInt(cell_value).getString
       end
   end
 end

@@ -2,6 +2,7 @@ require 'spec_helper'
 
 RSpec.configure do |c|
   c.filter_run_excluding :unimplemented => true
+  c.expect_with(:rspec) { |expect_config| expect_config.syntax = :should }
 end
 
 require File.expand_path('../lib/poi', File.dirname(__FILE__))

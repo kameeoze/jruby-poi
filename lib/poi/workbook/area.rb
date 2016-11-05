@@ -1,7 +1,8 @@
 module POI
   class Area
-    def initialize reference
+    def initialize reference, version
       @ref = reference
+      @version = version
     end
 
     def in workbook
@@ -64,8 +65,8 @@ module POI
       def new_area_reference
         begin
           return column_reference
-        rescue
-          return POI::AREA_REF.new(@ref)
+        rescue => x
+          return POI::AREA_REF.new(@ref, @version)
         rescue
           raise "could not determine area reference for #{@ref}: #{$!.message}"
         end
@@ -77,7 +78,7 @@ module POI
         area_start  = "#{sheet_parts.first}!#{area_parts.first}"
         area_end    = area_parts.last
 
-        POI::AREA_REF.getWholeColumn(area_start, area_end)
+        POI::AREA_REF.getWholeColumn(@version, area_start, area_end)
       end
   end
 end

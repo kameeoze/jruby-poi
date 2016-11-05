@@ -208,7 +208,7 @@ module POI
     end
     
     def cells_in_area reference
-      area = Area.new(reference)
+      area = Area.new(reference, self.get_spreadsheet_version)
       area.in(self)
     end
 
@@ -242,13 +242,9 @@ module POI
       area_start  = "#{sheet_parts.first}!#{area_parts.first}"
       area_end    = area_parts.last
       
-      area = org.apache.poi.ss.util.AreaReference.getWholeColumn(area_start, area_end)
+      area = AREA_REF.getWholeColumn(get_worksheet_version, area_start, area_end)
       full_ref = "#{area.first_cell.format_as_string}:#{area.last_cell.format_as_string}"
       Area.new(full_ref).in(self)
-      # cell_reference = org.apache.poi.ss.util.CellReference.new( reference + "1" )
-      # column         = cell_reference.get_col
-      # sheet          = cell_reference.get_sheet_name
-      # worksheets[sheet].rows.collect{|row| row[column]}
     end
     
     private
