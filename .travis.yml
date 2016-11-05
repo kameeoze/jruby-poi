@@ -5,6 +5,7 @@ os:
   - osx
 
 rvm:
+  - jruby-1.7.20
   - jruby-9.1.5.0
 
 before_install:
