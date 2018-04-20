@@ -83,7 +83,7 @@ module POI
       set_value( font, :font_height_in_points, options ) do | value |
         value.to_i
       end
-      set_value font, :bold_weight, options, FONT_CONSTANTS
+      set_value font, :boldweight, options, FONT_CONSTANTS
       set_value font, :color, options, INDEXED_COLORS_CONSTANTS do | value |
         value.index
       end
